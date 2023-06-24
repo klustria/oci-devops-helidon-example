@@ -263,37 +263,6 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
       {"status":"UP","checks":[{"name":"CustomReadinessCheck","status":"UP","data":{"time":1684391438298}}]}
       ```     
 
-### Patching
-This section will attempt to simulate a patching scenario. Take a case where initial environment uses OpenJDK for testing and eventually moves to use OracleJDK when it is ready for production. The previous build and deployment pipeline already sets OpenJDK 20 as the Java flavor to use. In this exercise, it will be replaced with OracleKDK 20.
-1. Check the previously completed deployment pipeline log and observe that near the bottom of the log that it was using Open JDK:
-   ```shell
-   2023-05-17T04:52:11.000Z  openjdk 20.0.1 2023-04-18   
-   2023-05-17T04:52:11.000Z  OpenJDK Runtime Environment (build 20.0.1+9-29)   
-   2023-05-17T04:52:11.000Z  OpenJDK 64-Bit Server VM (build 20.0.1+9-29, mixed mode, sharing)
-   ```
-2. Go back to Code Editor and ensure that `oci-mp` local directory is the active workspace.
-3. Edit `build_spec.yaml` and comment out (add # at the beginning of the line) the environment variable `JDK20_TAR_GZ_INSTALLER` that sets the URL path to an OpenJDK installer: 
-   ```
-   # JDK20_TAR_GZ_INSTALLER: "https://download.java.net/java/GA/jdk20.0.1/b4887098932d415489976708ad6d1a4b/9/GPL/openjdk-20.0.1_linux-x64_bin.tar.gz"
-   ```
-   and uncomment (remove # at the beginning of the line) the environment variable `JDK20_TAR_GZ_INSTALLER` on the next line that sets the URL path to an OracleJDK installer:
-   ```
-   JDK20_TAR_GZ_INSTALLER: "https://download.oracle.com/java/20/latest/jdk-20_linux-x64_bin.tar.gz"
-   ```
-4. Commit and push the change:
-   ```shell
-   git add .
-   git status
-   git commit -m "Replace OpenJDK 20 with OracleJDK 20"
-   git push
-   ```
-5. The pipeline will get triggered. Wait until the deployment pipeline is completed and check the logs for the Java details. You should see near the bottom of the log that OracleJDK is the new Java flavor being used:
-   ```shell
-   2023-05-17T05:23:10.000Z  java 20.0.1 2023-04-18   
-   2023-05-17T05:23:10.000Z  Java(TM) SE Runtime Environment (build 20.0.1+9-29)   
-   2023-05-17T05:23:10.000Z  Java HotSpot(TM) 64-Bit Server VM (build 20.0.1+9-29, mixed mode, sharing)
-   ```
-
 ### Modify Helidon application code to add Object Storage support.
 The objective of this exercise is to demonstrate how to add Object Storage access from the Helidon code. This is done by replacing a variable which is used to store the greeting word with an object that will now become the new greeting word container and is stored and retrieved from an Object Storage bucket. Since the object is persisted, the last greeting word value will survive application restarts. Without this change and with greeting word in memory via the variable, the greeting word will reset to default value when the application is restarted.
 1. Make sure that Code Editor is open with `oci-mp` local directory as the active workspace
