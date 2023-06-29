@@ -7,6 +7,7 @@ data "oci_containerengine_cluster_option" "oci_oke_cluster_option" {
 
 data "oci_containerengine_node_pool_option" "oci_oke_node_pool_option" {
   node_pool_option_id = "all"
+  compartment_id      = var.compartment_ocid
 }
 
 data "oci_core_services" "AllOCIServices" {

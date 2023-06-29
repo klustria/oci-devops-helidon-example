@@ -119,11 +119,11 @@ variable "node_pool_boot_volume_size_in_gbs" {
   default     = "60"
   description = "Specify a custom boot volume size (in GB)"
 }
-variable "image_operating_system" {
+variable "node_pool_image_operating_system" {
   default     = "Oracle Linux"
   description = "The OS/image installed on all nodes in the node pool."
 }
-variable "image_operating_system_version" {
+variable "node_pool_image_operating_system_version" {
   default     = "7.9"
   description = "The OS/image version installed on all nodes in the node pool."
 }
