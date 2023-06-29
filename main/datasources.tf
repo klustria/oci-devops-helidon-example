@@ -45,6 +45,7 @@ data "oci_containerengine_cluster_option" "oke" {
 }
 data "oci_containerengine_node_pool_option" "oke" {
   node_pool_option_id = "all"
+  compartment_id      = var.compartment_ocid
 }
 
 # OCI Services - Available Services

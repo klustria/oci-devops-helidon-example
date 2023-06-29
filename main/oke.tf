@@ -3,7 +3,7 @@
 
 module "oci-oke" {
   count                                                                       = var.create_new_oke_cluster ? 1 : 0
-  source                                                                      = "github.com/oracle-quickstart/oci-oke"
+  source                                                                      = "./oke" # "github.com/oracle-quickstart/oci-oke"
   tenancy_ocid                                                                = var.tenancy_ocid
   compartment_ocid                                                            = var.compartment_ocid
   oke_cluster_name                                                            = "oke-cluster${local.resource_name_suffix}"
