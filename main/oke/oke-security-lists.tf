@@ -4,8 +4,9 @@
 
 resource "oci_core_security_list" "oke_nodes_security_list" {
   compartment_id = var.compartment_ocid
-  display_name   = "oke-nodes-wkr-seclist${local.resource_name_suffix}"
-  vcn_id         = oci_core_virtual_network.oke_vcn[0].id
+  display_name   = "oke-nodes-wkr-seclist${var.resource_name_suffix}"
+  # vcn_id         = oci_core_virtual_network.oke_vcn[0].id
+  vcn_id         = oci_core_virtual_network.oke_vcn.id
 
   # Ingresses
   ingress_security_rules {
@@ -123,20 +124,20 @@ resource "oci_core_security_list" "oke_nodes_security_list" {
     }
   }
 
-  count        = var.create_new_oke_cluster ? 1 : 0
+  # count        = var.create_new_oke_cluster ? 1 : 0
 }
 
 resource "oci_core_security_list" "oke_lb_security_list" {
   compartment_id = var.compartment_ocid
-  display_name   = "oke-lb-seclist${local.resource_name_suffix}"
+  display_name   = "oke-lb-seclist${var.resource_name_suffix}"
   vcn_id         = oci_core_virtual_network.oke_vcn[0].id
 
-  count        = var.create_new_oke_cluster ? 1 : 0
+  # count        = var.create_new_oke_cluster ? 1 : 0
 }
 
 resource "oci_core_security_list" "oke_endpoint_security_list" {
   compartment_id = var.compartment_ocid
-  display_name   = "oke-k8s-api-endpoint-seclist${local.resource_name_suffix}"
+  display_name   = "oke-k8s-api-endpoint-seclist${var.resource_name_suffix}"
   vcn_id         = oci_core_virtual_network.oke_vcn[0].id
 
   # Ingresses
@@ -224,7 +225,7 @@ resource "oci_core_security_list" "oke_endpoint_security_list" {
     }
   }
 
-  count        = var.create_new_oke_cluster ? 1 : 0
+  # count        = var.create_new_oke_cluster ? 1 : 0
 }
 
 locals {

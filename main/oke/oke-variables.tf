@@ -1,14 +1,25 @@
 ## Copyright (c) 2021, Oracle and/or its affiliates.
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
+variable "compartment_ocid" {
+  default = ""
+}
+
+variable "resource_name_suffix" {
+  default = ""
+}
+
+variable "ssh_public_key" {
+  default = ""
+}
+
+variable "availability_domains" {
+  type = list
+}
 
 # OKE Variables
 ## OKE Cluster Details
 
-variable "create_new_oke_cluster" {
-  default     = true
-  description = "Creates a new OKE cluster, node pool and network resources"
-}
 variable "existent_oke_cluster_id" {
   default     = ""
   description = "Using existent OKE Cluster. Only the application and services will be provisioned. If select cluster autoscaler feature, you need to get the node pool id and enter when required"

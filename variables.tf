@@ -73,3 +73,9 @@ variable "project_logging_config_retention_period_in_days" {
 variable "project_description" {
   default = "DevOps Project for Instance Group deployment of a Helidon Application"
 }
+
+
+variable "create_new_oke_cluster" {
+  default     = true
+  description = "Creates a new OKE cluster, node pool and network resources"
+}
