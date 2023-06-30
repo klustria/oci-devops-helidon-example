@@ -16,7 +16,7 @@ resource "oci_core_instance" "compute_instance" {
 
   metadata = {
     ssh_authorized_keys = var.ssh_public_key
-    user_data           = base64encode(file("./cloud_init"))
+    user_data           = base64encode(file("./instance/cloud_init"))
   }
 
   create_vnic_details {

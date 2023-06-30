@@ -7,11 +7,6 @@ output "generated_ssh_private_key" {
   sensitive = true
 }
 
-# Output compute instance public ip
-output "deployment_instance_public_ip" {
-  value = oci_core_instance.compute_instance.public_ip
-}
-
 # Output code repository https url
 output "application_code_repository_https_url" {
   value = oci_devops_repository.devops_repo.http_url
@@ -26,4 +21,3 @@ output "application_bucket_name" {
 output "application_log_id" {
   value = oci_logging_log.application_log.id
 }
-

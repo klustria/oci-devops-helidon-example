@@ -132,7 +132,7 @@ resource "oci_devops_deploy_stage" "devops_deploy_stage" {
   deploy_stage_type                            = "COMPUTE_INSTANCE_GROUP_ROLLING_DEPLOYMENT"
   display_name                                 = "devops-deployment-stage${local.resource_name_suffix}"
   description                                  = "Deployment Pipeline Stage that will set a compute instance as the target platform"
-  compute_instance_group_deploy_environment_id = oci_devops_deploy_environment.devops_deploy_environment.id
+  compute_instance_group_deploy_environment_id = oci_devops_deploy_environment.devops_deploy_environment[0].id
   deployment_spec_deploy_artifact_id           = oci_devops_deploy_artifact.devops_deployment_spec_artifact.id
   rollout_policy {
     batch_count            = "5"
