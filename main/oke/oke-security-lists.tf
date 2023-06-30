@@ -130,7 +130,8 @@ resource "oci_core_security_list" "oke_nodes_security_list" {
 resource "oci_core_security_list" "oke_lb_security_list" {
   compartment_id = var.compartment_ocid
   display_name   = "oke-lb-seclist${var.resource_name_suffix}"
-  vcn_id         = oci_core_virtual_network.oke_vcn[0].id
+  # vcn_id         = oci_core_virtual_network.oke_vcn[0].id
+  vcn_id         = oci_core_virtual_network.oke_vcn.id
 
   # count        = var.create_new_oke_cluster ? 1 : 0
 }
@@ -138,7 +139,8 @@ resource "oci_core_security_list" "oke_lb_security_list" {
 resource "oci_core_security_list" "oke_endpoint_security_list" {
   compartment_id = var.compartment_ocid
   display_name   = "oke-k8s-api-endpoint-seclist${var.resource_name_suffix}"
-  vcn_id         = oci_core_virtual_network.oke_vcn[0].id
+  # vcn_id         = oci_core_virtual_network.oke_vcn[0].id
+  vcn_id         = oci_core_virtual_network.oke_vcn.id
 
   # Ingresses
 
