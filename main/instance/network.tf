@@ -5,13 +5,13 @@
 resource "oci_core_virtual_network" "vcn" {
   cidr_block     = var.VCN-CIDR
   compartment_id = var.compartment_ocid
-  display_name   = "vcn${local.resource_name_suffix}"
+  display_name   = "vcn${var.resource_name_suffix}"
 }
 
 # Create internet gateway to allow public internet traffic
 resource "oci_core_internet_gateway" "ig" {
   compartment_id = var.compartment_ocid
-  display_name   = "internet-gateway${local.resource_name_suffix}"
+  display_name   = "internet-gateway${var.resource_name_suffix}"
   vcn_id         = oci_core_virtual_network.vcn.id
 }
 
@@ -19,7 +19,7 @@ resource "oci_core_internet_gateway" "ig" {
 resource "oci_core_route_table" "rt" {
   compartment_id = var.compartment_ocid
   vcn_id         = oci_core_virtual_network.vcn.id
-  display_name   = "route-table${local.resource_name_suffix}"
+  display_name   = "route-table${var.resource_name_suffix}"
   route_rules {
     destination       = "0.0.0.0/0"
     network_entity_id = oci_core_internet_gateway.ig.id
@@ -29,7 +29,7 @@ resource "oci_core_route_table" "rt" {
 # Create security list to allow internet access, ssh access and port 8080 access
 resource "oci_core_security_list" "sl" {
   compartment_id = var.compartment_ocid
-  display_name   = "security-list${local.resource_name_suffix}"
+  display_name   = "security-list${var.resource_name_suffix}"
   vcn_id         = oci_core_virtual_network.vcn.id
 
   egress_security_rules {
@@ -59,7 +59,7 @@ resource "oci_core_security_list" "sl" {
 # Create regional subnets in vcn
 resource "oci_core_subnet" "subnet" {
   cidr_block        = var.Subnet-CIDR
-  display_name      = "subnet${local.resource_name_suffix}"
+  display_name      = "subnet${var.resource_name_suffix}"
   compartment_id    = var.compartment_ocid
   vcn_id            = oci_core_virtual_network.vcn.id
   dhcp_options_id   = oci_core_virtual_network.vcn.default_dhcp_options_id

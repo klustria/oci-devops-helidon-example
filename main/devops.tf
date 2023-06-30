@@ -146,13 +146,14 @@ resource "oci_devops_deploy_stage" "devops_deploy_stage" {
 
 # Create environment to set compute instance as target platform for deployment pipeline
 resource "oci_devops_deploy_environment" "devops_deploy_environment" {
+  count                   = !var.use_oke_cluster ? 1 : 0
   project_id              = oci_devops_project.devops_project.id
   display_name            = "devops-instance-group-environment${local.resource_name_suffix}"
   description             = "Sets a compute instance as the target platform for deployment pipeline"
   deploy_environment_type = "COMPUTE_INSTANCE_GROUP"
   compute_instance_group_selectors {
     items {
-      compute_instance_ids = [oci_core_instance.compute_instance.id]
+      compute_instance_ids = [module.instance-deployment[0].compute_instance_id]
       selector_type        = "INSTANCE_IDS"
     }
   }
