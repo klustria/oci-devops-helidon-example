@@ -1,11 +1,20 @@
 ## Copyright (c) 2021, Oracle and/or its affiliates.
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
+locals {
+  http_port_number                        = "80"
+  https_port_number                       = "443"
+  k8s_api_endpoint_port_number            = "6443"
+  k8s_worker_to_control_plane_port_number = "12250"
+  ssh_port_number                         = "22"
+  tcp_protocol_number                     = "6"
+  icmp_protocol_number                    = "1"
+  all_protocols                           = "all"
+}
 
 resource "oci_core_security_list" "oke_nodes_security_list" {
   compartment_id = var.compartment_ocid
   display_name   = "oke-nodes-wkr-seclist${var.resource_name_suffix}"
-  # vcn_id         = oci_core_virtual_network.oke_vcn[0].id
   vcn_id         = oci_core_virtual_network.oke_vcn.id
 
   # Ingresses
@@ -123,23 +132,17 @@ resource "oci_core_security_list" "oke_nodes_security_list" {
       code = "4"
     }
   }
-
-  # count        = var.create_new_oke_cluster ? 1 : 0
 }
 
 resource "oci_core_security_list" "oke_lb_security_list" {
   compartment_id = var.compartment_ocid
   display_name   = "oke-lb-seclist${var.resource_name_suffix}"
-  # vcn_id         = oci_core_virtual_network.oke_vcn[0].id
   vcn_id         = oci_core_virtual_network.oke_vcn.id
-
-  # count        = var.create_new_oke_cluster ? 1 : 0
 }
 
 resource "oci_core_security_list" "oke_endpoint_security_list" {
   compartment_id = var.compartment_ocid
   display_name   = "oke-k8s-api-endpoint-seclist${var.resource_name_suffix}"
-  # vcn_id         = oci_core_virtual_network.oke_vcn[0].id
   vcn_id         = oci_core_virtual_network.oke_vcn.id
 
   # Ingresses
@@ -226,17 +229,4 @@ resource "oci_core_security_list" "oke_endpoint_security_list" {
       code = "4"
     }
   }
-
-  # count        = var.create_new_oke_cluster ? 1 : 0
-}
-
-locals {
-  http_port_number                        = "80"
-  https_port_number                       = "443"
-  k8s_api_endpoint_port_number            = "6443"
-  k8s_worker_to_control_plane_port_number = "12250"
-  ssh_port_number                         = "22"
-  tcp_protocol_number                     = "6"
-  icmp_protocol_number                    = "1"
-  all_protocols                           = "all"
 }
