@@ -122,7 +122,8 @@ resource "oci_devops_deploy_pipeline" "devops_deploy_pipeline" {
 }
 
 # Create a deployment stage in the deployment pipeline targeting compute instance as the deployment destination
-resource "oci_devops_deploy_stage" "devops_deploy_stage" {
+resource "oci_devops_deploy_stage" "devops_deploy_instance_group_stage" {
+  count              = !var.use_oke_cluster ? 1 : 0
   deploy_pipeline_id = oci_devops_deploy_pipeline.devops_deploy_pipeline.id
   deploy_stage_predecessor_collection {
     items {
@@ -132,7 +133,7 @@ resource "oci_devops_deploy_stage" "devops_deploy_stage" {
   deploy_stage_type                            = "COMPUTE_INSTANCE_GROUP_ROLLING_DEPLOYMENT"
   display_name                                 = "devops-deployment-stage${local.resource_name_suffix}"
   description                                  = "Deployment Pipeline Stage that will set a compute instance as the target platform"
-  compute_instance_group_deploy_environment_id = oci_devops_deploy_environment.devops_deploy_environment[0].id
+  compute_instance_group_deploy_environment_id = oci_devops_deploy_environment.devops_deploy_instance_group_environment[0].id
   deployment_spec_deploy_artifact_id           = oci_devops_deploy_artifact.devops_deployment_spec_artifact.id
   rollout_policy {
     batch_count            = "5"
@@ -145,7 +146,7 @@ resource "oci_devops_deploy_stage" "devops_deploy_stage" {
 }
 
 # Create environment to set compute instance as target platform for deployment pipeline
-resource "oci_devops_deploy_environment" "devops_deploy_environment" {
+resource "oci_devops_deploy_environment" "devops_deploy_instance_group_environment" {
   count                   = !var.use_oke_cluster ? 1 : 0
   project_id              = oci_devops_project.devops_project.id
   display_name            = "devops-instance-group-environment${local.resource_name_suffix}"
