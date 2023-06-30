@@ -42,12 +42,12 @@ resource "oci_containerengine_cluster" "oci_oke_cluster" {
     for_each = var.vcn_native ? [1] : []
     content {
       is_public_ip_enabled = (var.cluster_endpoint_visibility == "Private") ? false : true  # var.is_api_endpoint_subnet_public
-      subnet_id            = oci_core_subnet.oke_k8s_endpoint_subnet.id  # var.use_existing_vcn ? var.api_endpoint_subnet_id : oci_core_subnet.oke_api_endpoint_subnet[0].id
+      subnet_id            = oci_core_subnet.oke_k8s_endpoint_subnet[0].id  # var.use_existing_vcn ? var.api_endpoint_subnet_id : oci_core_subnet.oke_api_endpoint_subnet[0].id
     }
   }
 
   options {
-    service_lb_subnet_ids = oci_core_subnet.oke_lb_subnet[0].id # [var.use_existing_vcn ? var.lb_subnet_id : oci_core_subnet.oke_lb_subnet[0].id]
+    service_lb_subnet_ids = [oci_core_subnet.oke_lb_subnet[0].id] # [var.use_existing_vcn ? var.lb_subnet_id : oci_core_subnet.oke_lb_subnet[0].id]
 
     add_ons {
       is_kubernetes_dashboard_enabled = var.cluster_options_add_ons_is_kubernetes_dashboard_enabled
