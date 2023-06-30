@@ -95,7 +95,7 @@ resource "oci_containerengine_node_pool" "oci_oke_node_pool" {
       # availability_domain = var.availability_domain == "" ? data.oci_identity_availability_domains.ADs.availability_domains[0]["name"] : var.availability_domain
       # subnet_id           = var.use_existing_vcn ? var.nodepool_subnet_id : oci_core_subnet.oke_nodepool_subnet[0].id
       # availability_domain = data.oci_identity_availability_domains.ads.availability_domains[0]["name"]
-      availability_domain = availability_domains[0]["name"]
+      availability_domain = var.availability_domains[0]["name"]
       # subnet_id           = oci_core_subnet.oke_nodes_subnet[0].id
       subnet_id           = oci_core_subnet.oke_nodes_subnet.id
     }
