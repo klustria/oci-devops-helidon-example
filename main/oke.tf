@@ -34,20 +34,20 @@
 
 resource "oci_containerengine_cluster" "oci_oke_cluster" {
   compartment_id     = var.compartment_ocid
-  kubernetes_version = var.k8s_version
+  kubernetes_version = (var.k8s_version == "Latest") ? local.cluster_k8s_latest_version : var.k8s_version
   name               = "oke-cluster${local.resource_name_suffix}"  # var.oke_cluster_name
   vcn_id             = oci_core_virtual_network.oke_vcn[0].id      # var.use_existing_vcn ? var.vcn_id : oci_core_vcn.oke_vcn[0].id
 
-  # dynamic "endpoint_config" {
-  #   for_each = var.vcn_native ? [1] : []
-  #   content {
-  #     is_public_ip_enabled = var.is_api_endpoint_subnet_public
-  #     subnet_id            = var.use_existing_vcn ? var.api_endpoint_subnet_id : oci_core_subnet.oke_api_endpoint_subnet[0].id
-  #   }
-  # }
+  dynamic "endpoint_config" {
+    for_each = var.vcn_native ? [1] : []
+    content {
+      is_public_ip_enabled = (var.cluster_endpoint_visibility == "Private") ? false : true  # var.is_api_endpoint_subnet_public
+      subnet_id            = oci_core_subnet.oke_k8s_endpoint_subnet.id  # var.use_existing_vcn ? var.api_endpoint_subnet_id : oci_core_subnet.oke_api_endpoint_subnet[0].id
+    }
+  }
 
   options {
-    service_lb_subnet_ids = [oci_core_subnet.oke_lb_subnet[0].id] # [var.use_existing_vcn ? var.lb_subnet_id : oci_core_subnet.oke_lb_subnet[0].id]
+    service_lb_subnet_ids = oci_core_subnet.oke_lb_subnet[0].id # [var.use_existing_vcn ? var.lb_subnet_id : oci_core_subnet.oke_lb_subnet[0].id]
 
     add_ons {
       is_kubernetes_dashboard_enabled = var.cluster_options_add_ons_is_kubernetes_dashboard_enabled
@@ -69,7 +69,7 @@ resource "oci_containerengine_cluster" "oci_oke_cluster" {
 resource "oci_containerengine_node_pool" "oci_oke_node_pool" {
   cluster_id         = oci_containerengine_cluster.oci_oke_cluster.id
   compartment_id     = var.compartment_ocid
-  kubernetes_version = var.k8s_version
+  kubernetes_version = (var.k8s_version == "Latest") ? local.cluster_k8s_latest_version : var.k8s_version
   name               = var.node_pool_name
   node_shape         = var.node_pool_shape
 
@@ -94,7 +94,7 @@ resource "oci_containerengine_node_pool" "oci_oke_node_pool" {
       availability_domain = data.oci_identity_availability_domains.ads.availability_domains[0]["name"]
       subnet_id           = oci_core_subnet.oke_nodes_subnet[0].id
     }
-    size = 1     # var.node_count
+    size = var.node_pool_workers     # var.node_count
     # defined_tags = var.defined_tags
   }
 

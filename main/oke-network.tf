@@ -24,6 +24,7 @@ resource "oci_core_subnet" "oke_k8s_endpoint_subnet" {
 
   count        = var.create_new_oke_cluster ? 1 : 0
 }
+
 resource "oci_core_subnet" "oke_nodes_subnet" {
   cidr_block                 = lookup(var.network_cidrs, "SUBNET-REGIONAL-CIDR")
   compartment_id             = var.compartment_ocid
@@ -72,6 +73,7 @@ resource "oci_core_route_table" "oke_private_route_table" {
 
   count        = var.create_new_oke_cluster ? 1 : 0
 }
+
 resource "oci_core_route_table" "oke_public_route_table" {
   compartment_id = var.compartment_ocid
   vcn_id         = oci_core_virtual_network.oke_vcn[0].id

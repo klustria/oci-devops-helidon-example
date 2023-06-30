@@ -99,7 +99,7 @@ variable "k8s_version" {
   default     = "Latest"
   description = "Kubernetes version installed on your master and worker nodes"
 }
-variable "num_pool_workers" {
+variable "node_pool_workers" {
   default     = 3
   description = "The number of worker nodes in the node pool. If select Cluster Autoscaler, will assume the minimum number of nodes configured"
 }
@@ -126,6 +126,12 @@ variable "node_pool_image_operating_system" {
 variable "node_pool_image_operating_system_version" {
   default     = "7.9"
   description = "The OS/image version installed on all nodes in the node pool."
+}
+variable "vcn_native" {
+  default = true
+}
+variable "is_api_endpoint_subnet_public" {
+  default = false
 }
 
 # Network Details
