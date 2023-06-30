@@ -56,7 +56,7 @@ resource "oci_containerengine_node_pool" "oci_oke_node_pool" {
 
   node_config_details {
     placement_configs {
-      availability_domain = var.availability_domains[0]["name"]
+      availability_domain = var.availability_domain_name
       subnet_id           = oci_core_subnet.oke_nodes_subnet.id
     }
     size = var.node_pool_workers     # var.node_count

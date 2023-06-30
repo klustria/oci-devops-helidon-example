@@ -13,8 +13,11 @@ variable "ssh_public_key" {
   default = ""
 }
 
-variable "availability_domains" {
-  type = list
+# variable "availability_domains" {
+#   type = list
+# }
+variable "availability_domain_name" {
+  default = ""
 }
 
 # OKE Variables

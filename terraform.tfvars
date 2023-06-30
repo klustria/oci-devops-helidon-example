@@ -22,3 +22,5 @@ compartment_ocid = "ocid1.compartment.oc1.."
 user_ocid        = "ocid1.user.oc1.."
 # fingerprint      = "1c.."
 # private_key_path = "~/.oci/oci_api_key.pem"
+
+use_oke_cluster = false
