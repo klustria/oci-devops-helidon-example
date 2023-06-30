@@ -7,6 +7,11 @@ output "generated_ssh_private_key" {
   sensitive = true
 }
 
+# Output compute instance public ip
+output "deployment_instance_public_ip" {
+  value = !var.use_oke_cluster ? module.instance-deployment[0].compute_instance_id : "No compute instance exist"
+}
+
 # Output code repository https url
 output "application_code_repository_https_url" {
   value = oci_devops_repository.devops_repo.http_url
