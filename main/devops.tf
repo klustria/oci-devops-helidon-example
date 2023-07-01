@@ -37,6 +37,7 @@ resource "oci_devops_build_pipeline" "devops_build_pipeline" {
 
 # 1st build pipeline stage - Managed Build
 resource "oci_devops_build_pipeline_stage" "devops_build_stage" {
+  count             = !var.use_oke_cluster ? 1 : 0
   build_pipeline_id = oci_devops_build_pipeline.devops_build_pipeline.id
   build_pipeline_stage_predecessor_collection {
     items {
@@ -66,6 +67,7 @@ resource "oci_devops_build_pipeline_stage" "devops_build_stage" {
 
 # 2nd build pipeline stage - Upload Artifact
 resource "oci_devops_build_pipeline_stage" "devops_upload_stage" {
+  count             = !var.use_oke_cluster ? 1 : 0
   build_pipeline_id = oci_devops_build_pipeline.devops_build_pipeline.id
   build_pipeline_stage_predecessor_collection {
     items {
@@ -89,6 +91,7 @@ resource "oci_devops_build_pipeline_stage" "devops_upload_stage" {
 
 # 3rd build pipeline stage - Trigger Deployment
 resource "oci_devops_build_pipeline_stage" "devops_trigger_deployment_stage" {
+  count             = !var.use_oke_cluster ? 1 : 0
   build_pipeline_id = oci_devops_build_pipeline.devops_build_pipeline.id
   build_pipeline_stage_predecessor_collection {
     items {
