@@ -71,7 +71,7 @@ resource "oci_devops_build_pipeline_stage" "devops_upload_stage" {
   build_pipeline_id = oci_devops_build_pipeline.devops_build_pipeline.id
   build_pipeline_stage_predecessor_collection {
     items {
-      id = oci_devops_build_pipeline_stage.devops_build_stage.id
+      id = oci_devops_build_pipeline_stage.devops_build_stage[0].id
     }
   }
   display_name              = "devops-upload-stage${local.resource_name_suffix}"
@@ -95,7 +95,7 @@ resource "oci_devops_build_pipeline_stage" "devops_trigger_deployment_stage" {
   build_pipeline_id = oci_devops_build_pipeline.devops_build_pipeline.id
   build_pipeline_stage_predecessor_collection {
     items {
-      id = oci_devops_build_pipeline_stage.devops_upload_stage.id
+      id = oci_devops_build_pipeline_stage.devops_upload_stage[0].id
     }
   }
   display_name                   = "devops-trigger-deployment-stage${local.resource_name_suffix}"
