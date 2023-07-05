@@ -6,7 +6,7 @@ module "oke-deployment" {
   source                   = "./oke"
   # availability_domains = data.oci_identity_availability_domains.ads.availability_domains
   region                   = var.region
-  tenancy_namespace        = data.oci_objectstorage_namespace.object_storage_namespace.id
+  tenancy_namespace        = data.oci_objectstorage_namespace.object_storage_namespace.namespace
   availability_domain_name = var.availablity_domain_name == "" ? data.oci_identity_availability_domains.ads.availability_domains[0]["name"] : var.availablity_domain_name
   compartment_ocid         = var.compartment_ocid
   artifact_repository_id   = oci_artifacts_repository.artifact_repo.id
