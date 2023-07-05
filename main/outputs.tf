@@ -9,7 +9,7 @@ output "generated_ssh_private_key" {
 
 # Output compute instance public ip
 output "deployment_instance_public_ip" {
-  value = !var.use_oke_cluster ? module.instance-deployment[0].compute_instance_id : "No compute instance exist"
+  value = !var.use_oke_cluster ? module.instance-deployment[0].deployment_instance_public_ip : "No compute instance exist"
 }
 
 # Output code repository https url
