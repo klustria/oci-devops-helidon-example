@@ -41,14 +41,14 @@ steps:
   - type: Command
     name: "Install Maven"
     command: |
-      wget -q https://dlcdn.apache.org/maven/maven-3/3.9.1/binaries/apache-maven-3.9.1-bin.tar.gz && echo "Maven downloaded successfully"
-      tar xzf apache-maven-3.9.1-bin.tar.gz && echo "Maven installed successfully"
+      wget -q https://dlcdn.apache.org/maven/maven-3/3.9.3/binaries/apache-maven-3.9.3-bin.tar.gz && echo "Maven downloaded successfully"
+      tar xzf apache-maven-3.9.3-bin.tar.gz && echo "Maven installed successfully"
   - type: Command
     name: "Build the Application"
     command: |
       PATH=$(ls -d `pwd`/jdk*/)bin:$PATH
       export JAVA_HOME=$(readlink -f `which java` | sed "s:/bin/java::")
-      export PATH=`pwd`/apache-maven-3.9.1/bin:$PATH
+      export PATH=`pwd`/apache-maven-3.9.3/bin:$PATH
       mvn clean package -DskipTests -B
   - type: Command
     name: "Assemble Application distribution"
