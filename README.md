@@ -27,14 +27,14 @@ CICD Pipeline Environment
    ```shell
    cd ~
    ```
-3. Use git to clone the main repository. This will create `devops_helidon_to_instance_ocw_hol` directory in the home directory.
+3. Use git to clone the main repository. This will create `oci-devops-helidon-example` directory in the home directory.
    ```shell
-   git clone https://github.com/klustria/devops_helidon_to_instance_ocw_hol.git
+   git clone https://github.com/klustria/oci-devops-helidon-example.git
    ```
 
 ### Prepare the environment
 The goal of this task is to prepare the environment for the DevOps setup by creating a Compartment, Dynamic Groups, User Group and Polices. This section requires a user with administrator privilege. If you don't have it, make sure to request another user with such privilege to run this for you.
-1. Open the newly cloned repository directory `devops_helidon_to_instance_ocw_hol` from the code editor.
+1. Open the newly cloned repository directory `oci-devops-helidon-example` from the code editor.
 2. From the root directory of the repository, open `terraform.tfvars` and set the values of the following variables: 
    * `tenancy_ocid` - This can be retrieved by opening the `Profile` menu and click `Tenancy: <your_tenancy_name>`. The tenancy OCID is shown under `Tenancy Information`. Click `Show` to display the entire ID or click `Copy` to copy it to your clipboard.
    * `region` - From OCI Console's home screen, open the `Region` menu, and then click `Manage Regions`. Locate the Home Region and copy the Region identifier.
@@ -52,7 +52,7 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
    terraform apply -auto-approve
    ```
 ### Provision all resources required to set up the OCI DevOps.
-1. Open `devops_helidon_to_instance_ocw_hol` from Code Editor.
+1. Open `oci-devops-helidon-example` from Code Editor.
 2. From the root directory of the cloned repository, open `terraform.tfvars` and fill up the values of the following variables:
    * `tenancy_ocid` - If already set from the previous exercise, leave as is. Otherwise, this can be retrieved by opening the `Profile` menu and click `Tenancy: <your_tenancy_name>`. The tenancy OCID is shown under `Tenancy Information`. Click `Show` to display the entire ID or click `Copy` to copy it to your clipboard.
    * `region` - If already set from the previous exercise, leave as is. Otherwise, from OCI Console's home screen, open the `Region` menu, and then click `Manage Regions`. Locate the Home Region and copy the Region identifier.
@@ -141,13 +141,13 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
     ```shell
     cd ~/oci-mp
     ```
-12. Copy the build and deployment pipeline specs from the `devops_helidon_to_instance_ocw_hol` repository.
+12. Copy the build and deployment pipeline specs from the `oci-devops-helidon-example` repository.
     ```shell
-    cp ~/devops_helidon_to_instance_ocw_hol/pipeline_specs/* .
+    cp ~/oci-devops-helidon-example/pipeline_specs/* .
     ```
 13. Add .gitignore so files and directories that are not needed to be part of the repository will be ignored by git.
     ```shell
-    cp ~/devops_helidon_to_instance_ocw_hol/.gitignore .
+    cp ~/oci-devops-helidon-example/.gitignore .
     ```   
 14. Initialize the oci-mp project directory to become a git repository.
     ```shell
@@ -157,9 +157,9 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
     ```shell
     git checkout -b main
     ```
-16. Set the remote repository. Use the OCI Code Repository's https url displayed from the last terraform output or use the `get.sh` tool from `devops_helidon_to_instance_ocw_hol` to retrieve that value.
+16. Set the remote repository. Use the OCI Code Repository's https url displayed from the last terraform output or use the `get.sh` tool from `oci-devops-helidon-example` to retrieve that value.
     ```shell
-    git remote add origin $(~/devops_helidon_to_instance_ocw_hol/main/get.sh code_repo_https_url)
+    git remote add origin $(~/oci-devops-helidon-example/main/get.sh code_repo_https_url)
     git remote -v
     ```
 17. Configure git to use credential helper store so that oci repository's username and password will be entered only once on git commands that require them. Also, set user.name and user.email which is required by git commit.
@@ -177,9 +177,9 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
     Username for 'https://devops.scmservice.uk-london-1.oci.oraclecloud.com': tenancy_name/my.name@example.com
     Password for 'https://tenancyname/my.name@example.com@devops.scmservice.uk-london-1.oci.oraclecloud.com':
     ```
-20. Run the utility script from the main repository (`devops_helidon_to_instance_ocw_hol`) to update the Config parameters:
+20. Run the utility script from the main repository (`oci-devops-helidon-example`) to update the Config parameters:
     ```shell
-    ~/devops_helidon_to_instance_ocw_hol/utils/update_config_values.sh
+    ~/oci-devops-helidon-example/utils/update_config_values.sh
     ```
     Invoking this script will perform the following:
     1. Updates in `~/oci-mp/server/src/main/resources/application.yaml` config file to set up a Helidon feature that sends Helidon generated metrics to the OCI monitoring service.
@@ -211,7 +211,7 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
 1. Access the application by using curl to do a GET & PUT http requests:
    1. Set up the deployment node public ip as an environment variable:
       ```shell
-      export PUBLIC_IP=$(~/devops_helidon_to_instance_ocw_hol/main/get.sh public_ip)
+      export PUBLIC_IP=$(~/oci-devops-helidon-example/main/get.sh public_ip)
       ```
    2. Hello world request:
       ```shell
@@ -244,7 +244,7 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
 5. The Helidon oci-mp application adds Health Check feature to validate `liveness` and/or `readiness`. You can check `GreetLivenessCheck` and `GreetReadinessCheck` class files respectively in the project to see how they are done. This will particularly be useful when running the app as a microservice on an orchestrator environment like Kubernetes to determine if the microservice needs to be restarted if it is not healthy. Specific to this lab, the `readiness` check is leveraged in the `DevOps deployment pipeline spec` after the app is started to determine if the Helidon application started successfully. Check out code at [line #79 in deployment_spec.yaml](pipeline_specs/deployment_instance.yaml) to see it in action.
    1. Set PUBLIC_IP value
       ```shell
-      export PUBLIC_IP=$(~/devops_helidon_to_instance_ocw_hol/main/get.sh public_ip)
+      export PUBLIC_IP=$(~/oci-devops-helidon-example/main/get.sh public_ip)
       ```
    2. Liveness Check
       ```shell
@@ -276,7 +276,7 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
 3. Perform the following updates to `oci-mp/server/src/main/java/ocw/hol/mp/oci/server/GreetingProvider.java`.
    1. Replace the existing GreetingProvider constructor method with the code that will have the following characteristics:
       1. From the constructor's argument section, add `ObjectStorage objectStorageClient` parameter. Since this is part of @Injected annotation, the parameter will automatically be processed and set by Helidon to contain the client which can be used to communicate with the Object Storage service without having to add several lines of OCI SDK code for that purpose. 
-      2. From the same constructor's argument section, add ConfigProperty which will extract value from an `oci.bucket.name` property in the configuration. This has earlier been populated in `microprofile-config.properties` during the initial application setup when a utility script called `update_config_values.sh` was executed from the `devops_helidon_to_instance_ocw_hol`  repository directory.
+      2. From the same constructor's argument section, add ConfigProperty which will extract value from an `oci.bucket.name` property in the configuration. This has earlier been populated in `microprofile-config.properties` during the initial application setup when a utility script called `update_config_values.sh` was executed from the `oci-devops-helidon-example`  repository directory.
       3. Using getNamespace() Object Storage SDK method, \retrieve the Object Storage's namespace as it will be used later to retrieve or store an object:
          ```java
          public GreetingProvider(@ConfigProperty(name = "app.greeting") String message,
@@ -359,9 +359,9 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
       import com.oracle.bmc.objectstorage.responses.GetNamespaceResponse;
       import com.oracle.bmc.objectstorage.responses.GetObjectResponse;
       ```
-   **Note:** Source code for this change can also be found in `~/devops_helidon_to_instance_ocw_hol/source/GreetingProvider.java`. For example, if you want to instead copy the change over the existing file, it can be done this way from the root of `oci-mp` directory: 
+   **Note:** Source code for this change can also be found in `~/oci-devops-helidon-example/source/GreetingProvider.java`. For example, if you want to instead copy the change over the existing file, it can be done this way from the root of `oci-mp` directory: 
     ```shell
-    cp ~/devops_helidon_to_instance_ocw_hol/source/GreetingProvider.java server/src/main/java/ocw/hol/mp/oci/server/
+    cp ~/oci-devops-helidon-example/source/GreetingProvider.java server/src/main/java/ocw/hol/mp/oci/server/
     ```
 4. Commit and push the changes:
    ```shell
@@ -374,7 +374,7 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
 6. Test by using curl and check that a new `hello.txt` object has been added in the bucket. Validate that the size of the object is the same as the size of the greeting word. For example, if the greeting  word is `Hello`, then the size should be 5. If the greeting word is `Hola`, then the size should be 4.
    1. Set up the deployment node public ip as an environment variable:
       ```shell
-      export PUBLIC_IP=$(~/devops_helidon_to_instance_ocw_hol/main/get.sh public_ip)
+      export PUBLIC_IP=$(~/oci-devops-helidon-example/main/get.sh public_ip)
       ```
    2. Call default Hello world request:
       ```shell
@@ -397,7 +397,7 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
    5. Check that the bucket's `hello.txt` object now has a size of 4 bytes because the greeting word is replaced with `Hola`. You can also download the object and verify that the content is changed to `Hola`.
    6. Restart the application using `restart.sh` tool to demonstrate that the value of the greeting word will survive as it is persisted in the Object Storage.
       ```shell
-      ~/devops_helidon_to_instance_ocw_hol/utils/restart.sh 
+      ~/oci-devops-helidon-example/utils/restart.sh 
       ```
       which will show an output like below if restart succeeds:
       ```shell
@@ -419,7 +419,7 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
 
 ### Destroy the Deployment
 When the environment is no longer needed, all the OCI resources can be cleaned up by following these steps:
-1. Go back to Code Editor and reopen `devops_helidon_to_instance_ocw_hol`, followed by opening a terminal
+1. Go back to Code Editor and reopen `oci-devops-helidon-example`, followed by opening a terminal
 2. Cleaning up all resources used for DevOps demo.
    1. From the terminal, change directory to main to destroy all the resources created for DevOps.
       ```shell

@@ -5,21 +5,21 @@
 ##### Start of Build Pipeline Code #####
 
 # Create build pipeline
-resource "oci_devops_build_pipeline" "devops_build_pipeline_oke" {
+resource "oci_devops_build_pipeline" "devops_oke_build_pipeline" {
   project_id   = var.devops_project_id
-  display_name = "devops-build-pipeline-oke${var.resource_name_suffix}"
+  display_name = "devops-oke-build-pipeline${var.resource_name_suffix}"
   description  = "Build Pipeline"
 }
 
 # 1st build pipeline stage - Managed Build
-resource "oci_devops_build_pipeline_stage" "devops_build_oke_stage" {
-  build_pipeline_id = oci_devops_build_pipeline.devops_build_pipeline_oke.id
+resource "oci_devops_build_pipeline_stage" "devops_oke_build_stage" {
+  build_pipeline_id = oci_devops_build_pipeline.devops_oke_build_pipeline.id
   build_pipeline_stage_predecessor_collection {
     items {
-      id = oci_devops_build_pipeline.devops_build_pipeline_oke.id
+      id = oci_devops_build_pipeline.devops_oke_build_pipeline.id
     }
   }
-  display_name              = "devops-build-stage-oke${var.resource_name_suffix}"
+  display_name              = "devops-oke-build-stage${var.resource_name_suffix}"
   description               = "1st build pipeline stage - Managed Build"
   build_pipeline_stage_type = "BUILD"
   build_runner_shape_config {
@@ -41,14 +41,14 @@ resource "oci_devops_build_pipeline_stage" "devops_build_oke_stage" {
 }
 
 # 2nd build pipeline stage - Upload Artifact
-resource "oci_devops_build_pipeline_stage" "devops_upload_oke_stage" {
-  build_pipeline_id = oci_devops_build_pipeline.devops_build_pipeline_oke.id
+resource "oci_devops_build_pipeline_stage" "devops_oke_upload_stage" {
+  build_pipeline_id = oci_devops_build_pipeline.devops_oke_build_pipeline.id
   build_pipeline_stage_predecessor_collection {
     items {
-      id = oci_devops_build_pipeline_stage.devops_build_oke_stage.id
+      id = oci_devops_build_pipeline_stage.devops_oke_build_stage.id
     }
   }
-  display_name              = "devops-upload-oke-stage${var.resource_name_suffix}"
+  display_name              = "devops-oke-upload-stage${var.resource_name_suffix}"
   description               = "2nd build pipeline stage - Upload Artifact"
   build_pipeline_stage_type = "DELIVER_ARTIFACT"
   deliver_artifact_collection {
@@ -64,17 +64,17 @@ resource "oci_devops_build_pipeline_stage" "devops_upload_oke_stage" {
 }
 
 # 3rd build pipeline stage - Trigger Deployment
-resource "oci_devops_build_pipeline_stage" "devops_trigger_deployment_oke_stage" {
-  build_pipeline_id = oci_devops_build_pipeline.devops_build_pipeline_oke.id
+resource "oci_devops_build_pipeline_stage" "devops_oke_trigger_deployment_stage" {
+  build_pipeline_id = oci_devops_build_pipeline.devops_oke_build_pipeline.id
   build_pipeline_stage_predecessor_collection {
     items {
-      id = oci_devops_build_pipeline_stage.devops_upload_oke_stage.id
+      id = oci_devops_build_pipeline_stage.devops_oke_upload_stage.id
     }
   }
-  display_name                   = "devops-trigger-deployment-oke-stage${var.resource_name_suffix}"
+  display_name                   = "devops-oke-trigger-deployment-stage${var.resource_name_suffix}"
   description                    = "3rd build pipeline stage - Trigger Deployment"
   build_pipeline_stage_type      = "TRIGGER_DEPLOYMENT_PIPELINE"
-  deploy_pipeline_id             = oci_devops_deploy_pipeline.devops_deploy_pipeline_oke.id
+  deploy_pipeline_id             = oci_devops_deploy_pipeline.devops_oke_deploy_pipeline.id
   is_pass_all_parameters_enabled = true
 }
 
@@ -83,10 +83,10 @@ resource "oci_devops_build_pipeline_stage" "devops_trigger_deployment_oke_stage"
 ##### Start of Deployment Pipeline Code #####
 
 # Create deployment pipeline and pass in the Artifact Repository OCID as a parameter
-resource "oci_devops_deploy_pipeline" "devops_deploy_pipeline_oke" {
+resource "oci_devops_deploy_pipeline" "devops_oke_deploy_pipeline" {
   project_id   = var.devops_project_id
   description  = "Deploy Pipleline"
-  display_name = "devops-deployment-pipeline-oke${var.resource_name_suffix}"
+  display_name = "devops-oke-deployment-pipeline${var.resource_name_suffix}"
   deploy_pipeline_parameters {
     items {
       name          = "REGISTRY_ENDPOINT"
@@ -102,17 +102,17 @@ resource "oci_devops_deploy_pipeline" "devops_deploy_pipeline_oke" {
 }
 
 # Create a deployment stage in the deployment pipeline targeting compute instance as the deployment destination
-resource "oci_devops_deploy_stage" "devops_deploy_oke_stage" {
-  deploy_pipeline_id = oci_devops_deploy_pipeline.devops_deploy_pipeline_oke.id
+resource "oci_devops_deploy_stage" "devops_oke_deploy_stage" {
+  deploy_pipeline_id = oci_devops_deploy_pipeline.devops_oke_deploy_pipeline.id
   deploy_stage_predecessor_collection {
     items {
-      id = oci_devops_deploy_pipeline.devops_deploy_pipeline_oke.id
+      id = oci_devops_deploy_pipeline.devops_oke_deploy_pipeline.id
     }
   }
   deploy_stage_type                            = "OKE_DEPLOYMENT"
-  display_name                                 = "devops-deployment-oke-stage${var.resource_name_suffix}"
+  display_name                                 = "devops-oke-deployment-stage${var.resource_name_suffix}"
   description                                  = "Deployment Pipeline Stage that will set an oke cluster as the target platform"
-  oke_cluster_deploy_environment_id            = oci_devops_deploy_environment.devops_deploy_oke_environment.id
+  oke_cluster_deploy_environment_id            = oci_devops_deploy_environment.devops_oke_deploy_environment.id
   kubernetes_manifest_deploy_artifact_ids      = [oci_devops_deploy_artifact.devops_oke_deployment_spec_artifact.id]
   rollback_policy {
     policy_type = "AUTOMATED_STAGE_ROLLBACK_POLICY"
@@ -120,7 +120,7 @@ resource "oci_devops_deploy_stage" "devops_deploy_oke_stage" {
 }
 
 # Create environment to set compute instance as target platform for deployment pipeline
-resource "oci_devops_deploy_environment" "devops_deploy_oke_environment" {
+resource "oci_devops_deploy_environment" "devops_oke_deploy_environment" {
   project_id              = var.devops_project_id
   display_name            = "devops-oke-environment${var.resource_name_suffix}"
   description             = "Sets an OKE cluster as the target platform for deployment pipeline"
@@ -151,7 +151,7 @@ resource "oci_devops_deploy_artifact" "devops_oke_application_docker_artifact" {
   argument_substitution_mode = "SUBSTITUTE_PLACEHOLDERS"
   deploy_artifact_type       = "DOCKER_IMAGE"
   project_id                 = var.devops_project_id
-  display_name               = "devops-application-artifact${var.resource_name_suffix}"
+  display_name               = "devops-oke-application-artifact${var.resource_name_suffix}"
   deploy_artifact_source {
     deploy_artifact_source_type = "OCIR"
     image_uri                   = "${var.region}.ocir.io/${var.tenancy_namespace}/oci-mp-server:$${BUILDRUN_HASH}"
@@ -168,7 +168,7 @@ resource "oci_devops_trigger" "devops_oke_trigger" {
   trigger_source = "DEVOPS_CODE_REPOSITORY"
   repository_id  = var.devops_repo_id
   actions {
-    build_pipeline_id = oci_devops_build_pipeline.devops_build_pipeline_oke.id
+    build_pipeline_id = oci_devops_build_pipeline.devops_oke_build_pipeline.id
     type              = "TRIGGER_BUILD_PIPELINE"
     filter {
       trigger_source = "DEVOPS_CODE_REPOSITORY"
