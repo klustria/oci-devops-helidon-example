@@ -61,4 +61,4 @@ outputArtifacts:
     location: ${ARTIFACT_NAME}
   - name: deployment_spec
     type: BINARY
-    location: deployment_spec.yaml
+    location: deployment_instance.yaml

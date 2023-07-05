@@ -41,3 +41,12 @@ variable "use_oke_cluster" {
   default     = true
   description = "Creates a new OKE cluster, node pool and network resources"
 }
+
+variable "deployment_target" {
+  type    = string
+  default = "ALL"
+  validation {
+    condition     = contains(["OKE", "INSTANCE", "ALL"], upper(var.deployment_target))
+    error_message = "Must be either \"a\" or \"b\"."
+  }
+}

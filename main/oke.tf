@@ -2,9 +2,8 @@
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
 module "oke-deployment" {
-  count                    = var.use_oke_cluster ? 1 : 0
+  count                    = length(regexall("(?i)^(OKE|ALL)$", var.deployment_target)) > 0 ? 1 : 0
   source                   = "./oke"
-  # availability_domains = data.oci_identity_availability_domains.ads.availability_domains
   region                   = var.region
   tenancy_namespace        = data.oci_objectstorage_namespace.object_storage_namespace.namespace
   availability_domain_name = var.availablity_domain_name == "" ? data.oci_identity_availability_domains.ads.availability_domains[0]["name"] : var.availablity_domain_name

@@ -25,7 +25,7 @@ resource "oci_devops_build_pipeline_stage" "devops_build_stage" {
     build_runner_type = "DEFAULT"
   }
   image                = "OL7_X86_64_STANDARD_10"
-  build_spec_file      = "" # defaults to build_spec.yaml
+  build_spec_file      = "build_instance.yaml"
   primary_build_source = var.devops_repo_name
   build_source_collection {
     items {
