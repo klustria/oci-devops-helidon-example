@@ -159,3 +159,23 @@ resource "oci_devops_deploy_artifact" "devops_oke_application_docker_artifact" {
 }
 
 #### End of deploy artifacts code #####
+
+# Create a trigger to start the pipeline if code repository push event occurs
+resource "oci_devops_trigger" "devops_oke_trigger" {
+  project_id     = var.devops_project_id
+  display_name   = "devops-oke-trigger${var.resource_name_suffix}"
+  description    = "Will trigger start of OKE pipeline when push event on the code repository takes place"
+  trigger_source = "DEVOPS_CODE_REPOSITORY"
+  repository_id  = var.artifact_repository_id
+  actions {
+    build_pipeline_id = oci_devops_build_pipeline.devops_build_pipeline_oke.id
+    type              = "TRIGGER_BUILD_PIPELINE"
+    filter {
+      trigger_source = "DEVOPS_CODE_REPOSITORY"
+      events         = ["PUSH"]
+      include {
+        head_ref = "main"
+      }
+    }
+  }
+}

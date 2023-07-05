@@ -5,6 +5,28 @@ variable "resource_name_suffix" {
   default = ""
 }
 
+#
+variable "devops_project_id" {
+  default = ""
+}
+
+variable "artifact_repository_id" {
+  default = ""
+}
+
+variable "devops_repo_name" {
+  default = ""
+}
+
+variable "devops_repo_id" {
+  default = ""
+}
+
+variable "devops_repo_http_url" {
+  default = ""
+}
+#
+
 variable "compartment_ocid" {
   default = ""
 }

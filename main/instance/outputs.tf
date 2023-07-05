@@ -6,7 +6,3 @@ output "deployment_instance_public_ip" {
   value = oci_core_instance.compute_instance.public_ip
 }
 
-output "compute_instance_id" {
-  value = oci_core_instance.compute_instance.id
-}
-
