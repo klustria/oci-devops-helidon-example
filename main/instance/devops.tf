@@ -175,7 +175,7 @@ resource "oci_devops_trigger" "devops_trigger" {
   display_name   = "devops-trigger${var.resource_name_suffix}"
   description    = "Will trigger start of pipeline when push event on the code repository takes place"
   trigger_source = "DEVOPS_CODE_REPOSITORY"
-  repository_id  = var.artifact_repository_id
+  repository_id  = var.devops_repo_id
   actions {
     build_pipeline_id = oci_devops_build_pipeline.devops_build_pipeline.id
     type              = "TRIGGER_BUILD_PIPELINE"
