@@ -1,7 +1,15 @@
 ## Copyright (c) 2021, Oracle and/or its affiliates.
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
+variable "region" {
+  default = ""
+}
+
 variable "compartment_ocid" {
+  default = ""
+}
+
+variable "tenancy_namespace" {
   default = ""
 }
 
@@ -13,10 +21,27 @@ variable "ssh_public_key" {
   default = ""
 }
 
-# variable "availability_domains" {
-#   type = list
-# }
 variable "availability_domain_name" {
+  default = ""
+}
+
+variable "devops_project_id" {
+  default = ""
+}
+
+variable "artifact_repository_id" {
+  default = ""
+}
+
+variable "devops_repo_name" {
+  default = ""
+}
+
+variable "devops_repo_id" {
+  default = ""
+}
+
+variable "devops_repo_http_url" {
   default = ""
 }
 

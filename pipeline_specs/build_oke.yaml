@@ -1,0 +1,40 @@
+## Copyright (c) 2023, Oracle and/or its affiliates.
+## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
+
+# This build spec is custom tailored for the Helidon version 4 MP OCI template generated via the Helidon Archetype
+version: 0.1
+component: build
+timeoutInSeconds: 900
+failImmediatelyOnError: true
+# runAs: root
+shell: bash
+env:
+  variables:
+    HELIDON_PROJECT_NAME: "oci-mp"
+  vaultVariables:
+  exportedVariables:
+    - BUILDRUN_HASH
+    - HELIDON_APP_NAME
+steps:
+  - type: Command
+    name: "Exported variables"
+    timeoutInSeconds: 140
+    command: |
+      echo "OCI_BUILD_RUN_ID: ${OCI_BUILD_RUN_ID}"
+      export BUILDRUN_HASH=`echo ${OCI_BUILD_RUN_ID} | rev | cut -c 1-7`
+      echo "BUILDRUN_HASH: " $BUILDRUN_HASH
+      export HELIDON_APP_NAME=${HELIDON_PROJECT_NAME}-server
+      echo "HELIDON_APP_NAME: " $HELIDON_APP_NAME
+
+  - type: Command
+    name: "Build the Application"
+    command: |
+      docker build --pull --rm -t ${HELIDON_APP_NAME} .
+
+outputArtifacts:
+  - name: app_base_image
+    type: DOCKER_IMAGE
+    location: ${HELIDON_APP_NAME}:latest
+  - name: deployment_kube_manifest
+    type: BINARY
+    location: deployment_oke.yaml

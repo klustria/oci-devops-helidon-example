@@ -3,7 +3,7 @@
 ## Copyright (c) 2023, Oracle and/or its affiliates.
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
-ARTIFACT_REPO_NAME=artifact-repo-helidon-ocw-hol
+ARTIFACT_REPO_NAME=artifact-repo-helidon-demo
 BUCKET_NAME=$($(dirname $0)/get.sh bucket_name)
 
 resources=$(jq -r '.resources[] | select(.type == "oci_artifacts_repository").instances[].attributes | select(.display_name == "'"${ARTIFACT_REPO_NAME}"'") | .compartment_id,.id' terraform.tfstate)
