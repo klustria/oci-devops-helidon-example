@@ -47,6 +47,6 @@ variable "deployment_target" {
   default = "ALL"
   validation {
     condition     = contains(["OKE", "INSTANCE", "ALL"], upper(var.deployment_target))
-    error_message = "Must be either \"a\" or \"b\"."
+    error_message = "Must be either \"OKE\", \"INSTANCE\" or \"ALL\"."
   }
 }

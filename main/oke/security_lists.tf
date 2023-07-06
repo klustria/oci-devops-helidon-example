@@ -4,8 +4,12 @@
 locals {
   http_port_number                        = "80"
   https_port_number                       = "443"
+  application_port_number                 = "8080"
   k8s_api_endpoint_port_number            = "6443"
   k8s_worker_to_control_plane_port_number = "12250"
+  k8s_kube_proxy_port_number              = "10256"
+  k8s_node_port_low_number                = "27500"
+  k8s_node_port_high_number               = "32767"
   ssh_port_number                         = "22"
   tcp_protocol_number                     = "6"
   icmp_protocol_number                    = "1"
@@ -56,6 +60,31 @@ resource "oci_core_security_list" "oke_nodes_security_list" {
       code = "4"
     }
   }
+  ingress_security_rules {
+    description = "Inbound access from LB to kube-proxy"
+    source      = lookup(var.network_cidrs, "LB-SUBNET-REGIONAL-CIDR")
+    source_type = "CIDR_BLOCK"
+    protocol    = local.tcp_protocol_number
+    stateless   = false
+
+    tcp_options {
+      max = local.k8s_kube_proxy_port_number
+      min = local.k8s_kube_proxy_port_number
+    }
+  }
+  ingress_security_rules {
+    description = "Inbound access from LB to a Node Port"
+    source      = lookup(var.network_cidrs, "LB-SUBNET-REGIONAL-CIDR")
+    source_type = "CIDR_BLOCK"
+    protocol    = local.tcp_protocol_number
+    stateless   = false
+
+    tcp_options {
+      max = local.k8s_node_port_high_number
+      min = local.k8s_node_port_low_number
+    }
+  }
+
 
   # Egresses
   egress_security_rules {
@@ -138,6 +167,48 @@ resource "oci_core_security_list" "oke_lb_security_list" {
   compartment_id = var.compartment_ocid
   display_name   = "oke-lb-seclist${var.resource_name_suffix}"
   vcn_id         = oci_core_virtual_network.oke_vcn.id
+
+  # Ingresses
+
+  ingress_security_rules {
+    description = "Access to application port"
+    source      = lookup(var.network_cidrs, "ALL-CIDR")
+    source_type = "CIDR_BLOCK"
+    protocol    = local.tcp_protocol_number
+    stateless   = false
+
+    tcp_options {
+      max = local.application_port_number
+      min = local.application_port_number
+    }
+  }
+
+  # Egresses
+
+  egress_security_rules {
+    description      = "Access from LB to kube-proxy"
+    destination      = lookup(var.network_cidrs, "SUBNET-REGIONAL-CIDR")
+    destination_type = "CIDR_BLOCK"
+    protocol         = local.tcp_protocol_number
+    stateless        = false
+
+    tcp_options {
+      max = local.k8s_kube_proxy_port_number
+      min = local.k8s_kube_proxy_port_number
+    }
+  }
+  egress_security_rules {
+    description      = "Access from LB to NodePort"
+    destination      = lookup(var.network_cidrs, "SUBNET-REGIONAL-CIDR")
+    destination_type = "CIDR_BLOCK"
+    protocol         = local.tcp_protocol_number
+    stateless        = false
+
+    tcp_options {
+      max = local.k8s_node_port_high_number
+      min = local.k8s_node_port_low_number
+    }
+  }
 }
 
 resource "oci_core_security_list" "oke_endpoint_security_list" {
