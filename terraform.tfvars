@@ -29,4 +29,4 @@ user_ocid        = "ocid1.user.oc1.."
 # 2. OKE      - Deploys to a provisioned OKE Cluster
 # 3. ALL      - Deploys to both OKE and INSTANCE.
 # Default is ALL
-deployment_target = "INSTANCE"
+deployment_target = "ALL"
