@@ -3,8 +3,9 @@
 ## Copyright (c) 2023, Oracle and/or its affiliates.
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
+SCRIPT_DIR=$(dirname $0)
 ARTIFACT_REPO_NAME=artifact-repo-helidon-demo
-BUCKET_NAME=$($(dirname $0)/get.sh bucket_name)
+BUCKET_NAME=$(${SCRIPT_DIR}/get.sh bucket_name)
 
 resources=$(jq -r '.resources[] | select(.type == "oci_artifacts_repository").instances[].attributes | select(.display_name == "'"${ARTIFACT_REPO_NAME}"'") | .compartment_id,.id' terraform.tfstate)
 readarray -t resources <<<"$resources"
@@ -32,6 +33,16 @@ for object_name in ${object_names[@]} ; do
 done
 echo "Deleted $i objects"
 echo
+
+# Clean up Kubernetes resources if they exist
+kubectl --kubeconfig=${SCRIPT_DIR}/generated/kubeconfig delete deployment oci-mp-server &>/dev/null
+if [ $? -eq 0 ]; then
+  echo "oci-mp-server deployment was deleted"
+fi
+kubectl --kubeconfig=${SCRIPT_DIR}/generated/kubeconfig delete service oci-mp-server &>/dev/null
+if [ $? -eq 0 ]; then
+  echo "oci-mp-server LoadBalancer service was deleted"
+fi
 
 echo "Begin Terraform destroy..."
 echo

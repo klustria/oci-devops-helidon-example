@@ -138,7 +138,7 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
 8. When prompted for `Project groupId`, `Project artifactId` and `Project version`, just accept the default values. 
 9. When prompted for `Java package name`, use `demo.mp.oci`
    ```shell
-   Java package name (default: me.keith_lust.mp.oci): demo.mp.oci
+   Java package name (default: me.first_last.mp.oci): demo.mp.oci
    ```
 10. Once completed, this will generate an `oci-mp` project. Open `oci-mp` from Code Editor followed by starting a new terminal.
 11. The terminal should already be in the `oci-mp` directory, but if it is not, go inside that directory.
@@ -216,47 +216,77 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
 25. This will trigger the DevOps to start the pipeline. Go to the DevOps project from the OCI console and observe the build and deployment pipeline logs.
 
 ### Demo the Helidon App:
-1. Access the application by using curl to do a GET & PUT http requests:
-   1. Set up the deployment node public ip as an environment variable:
+1. If the instance was configured as the deployment target, i.e. `deployment_target` is set to `INSTANCE` or `ALL`, access the application by using curl to do a GET & PUT http requests.
+    1. Set the endpoint using the instance's public ip:
+       ```shell
+       export ENDPOINT_IP=$(~/oci-devops-helidon-example/main/get.sh ENDPOINT_IP)
+       ```
+    2. Hello world request:
+       ```shell
+       curl http://$ENDPOINT_IP:8080/greet
+       ```
+       results to:
+       ```shell
+       {"message":"Hello World!","date":[2023,5,10]}
+       ```
+    3. Hello to a name, i.e. to `Joe`:
+       ```shell
+       curl http://$ENDPOINT_IP:8080/greet/Joe
+       ```
+       results to:
+       ```shell
+       {"message":"Hello Joe!","date":[2023,5,10]}
+       ```
+    4. Replace Hello with another greeting word, i.e. `Hola`:
+       ```shell
+       curl -X PUT -H "Content-Type: application/json" -d '{"greeting" : "Hola"}' http://$ENDPOINT_IP:8080/greet/greeting 
+       curl http://$ENDPOINT_IP:8080/greet
+       ```
+       results to:
+       ```shell
+       {"message":"Hola World!","date":[2023,5,10]}
+       ```
+2. If OKE was configured as the deployment target, i.e. `deployment_target` is set to `OKE` or `ALL`, access the application by using curl to do GET & PUT rest requests.
+    1. Set the endpoint using the LoadBalancer's external IP:
+       ```shell
+       export ENDPOINT_IP=$(kubectl --kubeconfig=~/oci-devops-helidon-example/main/generated/kubeconfig get services oci-mp-server -o jsonpath='{. status.loadBalancer.ingress[].ip}')
+       ```
+    2. Hello world request:
+       ```shell
+       curl http://$ENDPOINT_IP:8080/greet
+       ```
+       results to:
+       ```shell
+       {"message":"Hello World!","date":[2023,5,10]}
+       ```
+    3. Hello to a name, i.e. to `Joe`:
+       ```shell
+       curl http://$ENDPOINT_IP:8080/greet/Joe
+       ```
+       results to:
+       ```shell
+       {"message":"Hello Joe!","date":[2023,5,10]}
+       ```
+    4. Replace Hello with another greeting word, i.e. `Hola`:
+       ```shell
+       curl -X PUT -H "Content-Type: application/json" -d '{"greeting" : "Hola"}' http://$ENDPOINT_IP:8080/greet/greeting 
+       curl http://$ENDPOINT_IP:8080/greet
+       ```
+       results to:
+       ```shell
+       {"message":"Hola World!","date":[2023,5,10]}
+       ```
+3. Validate that the Helidon Metrics are pushed to the OCI Monitoring Service. Go to Observability & Management -> Metrics Explorer (under Monitoring). On Query 1, choose your compartment, select `helidon_metrics` under Metric Namespace, select on
+4. Show OCI Monitoring SDK integration to push custom metric to the Monitor Service
+5. Validate OCI Logging SDK integration to push message to the Logging Service by exploring the log `app-log-helidon-ocw-hol` on log-group `app-log-group-helidon-ocw-hol`.
+6. The Helidon oci-mp application adds Health Check feature to validate `liveness` and/or `readiness`. You can check `GreetLivenessCheck` and `GreetReadinessCheck` class files respectively in the project to see how they are done. This will particularly be useful when running the app as a microservice on an orchestrator environment like Kubernetes to determine if the microservice needs to be restarted if it is not healthy. Specific to this lab, the `readiness` check is leveraged in the `DevOps deployment pipeline spec` after the app is started to determine if the Helidon application started successfully. Check out code at [line #79 in deployment_spec.yaml](pipeline_specs/deployment_instance.yaml) to see it in action.
+   1. Set ENDPOINT_IP value
       ```shell
-      export PUBLIC_IP=$(~/oci-devops-helidon-example/main/get.sh public_ip)
-      ```
-   2. Hello world request:
-      ```shell
-      curl http://$PUBLIC_IP:8080/greet
-      ```
-      results to:
-      ```shell
-      {"message":"Hello World!","date":[2023,5,10]}
-      ```
-   3. Hello to a name, i.e. to `Joe`:
-      ```shell
-      curl http://$PUBLIC_IP:8080/greet/Joe
-      ```
-      results to:
-      ```shell
-      {"message":"Hello Joe!","date":[2023,5,10]}
-      ```
-   4. Replace Hello with another greeting word, i.e. `Hola`:
-      ```shell
-      curl -X PUT -H "Content-Type: application/json" -d '{"greeting" : "Hola"}' http://$PUBLIC_IP:8080/greet/greeting 
-      curl http://$PUBLIC_IP:8080/greet
-      ```
-      results to:
-      ```shell
-      {"message":"Hola World!","date":[2023,5,10]}
-      ```
-2. Validate that the Helidon Metrics are pushed to the OCI Monitoring Service. Go to Observability & Management -> Metrics Explorer (under Monitoring). On Query 1, choose your compartment, select `helidon_metrics` under Metric Namespace, select on
-3. Show OCI Monitoring SDK integration to push custom metric to the Monitor Service
-4. Validate OCI Logging SDK integration to push message to the Logging Service by exploring the log `app-log-helidon-ocw-hol` on log-group `app-log-group-helidon-ocw-hol`.
-5. The Helidon oci-mp application adds Health Check feature to validate `liveness` and/or `readiness`. You can check `GreetLivenessCheck` and `GreetReadinessCheck` class files respectively in the project to see how they are done. This will particularly be useful when running the app as a microservice on an orchestrator environment like Kubernetes to determine if the microservice needs to be restarted if it is not healthy. Specific to this lab, the `readiness` check is leveraged in the `DevOps deployment pipeline spec` after the app is started to determine if the Helidon application started successfully. Check out code at [line #79 in deployment_spec.yaml](pipeline_specs/deployment_instance.yaml) to see it in action.
-   1. Set PUBLIC_IP value
-      ```shell
-      export PUBLIC_IP=$(~/oci-devops-helidon-example/main/get.sh public_ip)
+      export ENDPOINT_IP=$(~/oci-devops-helidon-example/main/get.sh ENDPOINT_IP)
       ```
    2. Liveness Check
       ```shell
-      curl http://$PUBLIC_IP:8080/health/live
+      curl http://$ENDPOINT_IP:8080/health/live
       ```
       results to:
       ```shell
@@ -264,7 +294,7 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
       ```
    3. Readiness Check
        ```shell
-      curl http://$PUBLIC_IP:8080/health/ready
+      curl http://$ENDPOINT_IP:8080/health/ready
       ```
       results to:
       ```shell
@@ -382,11 +412,11 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
 6. Test by using curl and check that a new `hello.txt` object has been added in the bucket. Validate that the size of the object is the same as the size of the greeting word. For example, if the greeting  word is `Hello`, then the size should be 5. If the greeting word is `Hola`, then the size should be 4.
    1. Set up the deployment node public ip as an environment variable:
       ```shell
-      export PUBLIC_IP=$(~/oci-devops-helidon-example/main/get.sh public_ip)
+      export ENDPOINT_IP=$(~/oci-devops-helidon-example/main/get.sh ENDPOINT_IP)
       ```
    2. Call default Hello world request:
       ```shell
-      curl http://$PUBLIC_IP:8080/greet
+      curl http://$ENDPOINT_IP:8080/greet
       ```
       results to:
       ```shell
@@ -395,8 +425,8 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
    3. Check that the bucket now contains an object `hello.txt` and has a size of 5 bytes because the greeting word is `Hello`. You can also download the object and verify that the content is indeed `Hello`.
    4. Replace `Hello` greeting word with `Hola`:
       ```shell
-      curl -X PUT -H "Content-Type: application/json" -d '{"greeting" : "Hola"}' http://$PUBLIC_IP:8080/greet/greeting 
-      curl http://$PUBLIC_IP:8080/greet
+      curl -X PUT -H "Content-Type: application/json" -d '{"greeting" : "Hola"}' http://$ENDPOINT_IP:8080/greet/greeting 
+      curl http://$ENDPOINT_IP:8080/greet
       ```
       results to:
       ```shell
@@ -418,7 +448,7 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
       ```
    7. Call default Hello world request and observe that the greeting word is still `Hola`.
       ```shell
-      curl http://$PUBLIC_IP:8080/greet
+      curl http://$ENDPOINT_IP:8080/greet
       ```
       results to:
       ```shell
