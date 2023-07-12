@@ -1,4 +1,4 @@
-package ocw.hol.mp.oci.server;
+package demo.mp.oci.server;
 
 import java.io.ByteArrayInputStream;
 import java.util.logging.Logger;

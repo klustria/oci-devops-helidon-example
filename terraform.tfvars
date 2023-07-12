@@ -23,8 +23,7 @@ user_ocid        = "ocid1.user.oc1.."
 # fingerprint      = "1c.."
 # private_key_path = "~/.oci/oci_api_key.pem"
 
-# use_oke_cluster = false
-# Deployment target destination. Allowed values are (not case sensitive):
+# Deployment target destination. Allowed values are the following (not case sensitive):
 # 1. INSTANCE - Deploys to a provisioned instance
 # 2. OKE      - Deploys to a provisioned OKE Cluster
 # 3. ALL      - Deploys to both OKE and INSTANCE.

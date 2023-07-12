@@ -60,6 +60,10 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
      ```shell
      utils/update_compartment.sh
      ```
+   * `deployment_target` - Choose the deployment target destination. Allowed values are the following (not case sensitive):
+     1. INSTANCE - Deploys to a provisioned instance
+     2. OKE      - Deploys to a provisioned OKE Cluster
+     3. ALL      - Deploys to both OKE and INSTANCE. This is the default value. 
 3. Open a new terminal and go to `main` directory,
    ```shell
    cd main
@@ -110,7 +114,7 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
    ```
 5. When it prompts for `Helidon version`, enter `4.0.0-ALPHA6`
    ```shell
-   Helidon version (default: 3.2.0): 4.0.0-ALPHA6
+   Helidon version (default: 3.2.2): 4.0.0-ALPHA6
    ```
 6. When prompted to `Select a Flavor`, choose `Helidon MP`
    ```shell
@@ -132,9 +136,9 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
    Enter selection (default: 1): 4
    ```
 8. When prompted for `Project groupId`, `Project artifactId` and `Project version`, just accept the default values. 
-9. When prompted for `Java package name`, use `ocw.hol.mp.oci`
+9. When prompted for `Java package name`, use `demo.mp.oci`
    ```shell
-   Java package name (default: me.keith_lust.mp.oci): ocw.hol.mp.oci
+   Java package name (default: me.keith_lust.mp.oci): demo.mp.oci
    ```
 10. Once completed, this will generate an `oci-mp` project. Open `oci-mp` from Code Editor followed by starting a new terminal.
 11. The terminal should already be in the `oci-mp` directory, but if it is not, go inside that directory.
@@ -148,36 +152,40 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
 13. Add .gitignore so files and directories that are not needed to be part of the repository will be ignored by git.
     ```shell
     cp ~/oci-devops-helidon-example/.gitignore .
-    ```   
-14. Initialize the oci-mp project directory to become a git repository.
+    ```
+14. Copy the `Dockerfile` that will be used to create the application as a Docker image if the deployment target is OKE, otherwise this step can be skipped.
+    ```shell
+    cp ~/oci-devops-helidon-example/main/Dockerfile .
+    ```
+15. Initialize the oci-mp project directory to become a git repository.
     ```shell
     git init
     ```
-15. Set the branch to `main` to match the corresponding remote branch.
+16. Set the branch to `main` to match the corresponding remote branch.
     ```shell
     git checkout -b main
     ```
-16. Set the remote repository. Use the OCI Code Repository's https url displayed from the last terraform output or use the `get.sh` tool from `oci-devops-helidon-example` to retrieve that value.
+17. Set the remote repository. Use the OCI Code Repository's https url displayed from the last terraform output or use the `get.sh` tool from `oci-devops-helidon-example` to retrieve that value.
     ```shell
     git remote add origin $(~/oci-devops-helidon-example/main/get.sh code_repo_https_url)
     git remote -v
     ```
-17. Configure git to use credential helper store so that oci repository's username and password will be entered only once on git commands that require them. Also, set user.name and user.email which is required by git commit.
+18. Configure git to use credential helper store so that oci repository's username and password will be entered only once on git commands that require them. Also, set user.name and user.email which is required by git commit.
     ```shell
     git config credential.helper store
     git config --global user.email "my.name@example.com"
     git config --global user.name "FIRST_NAME LAST_NAME"
     ```
-18. Synchronize the oci repository's git log with the local repository by using git pull.
+19. Synchronize the oci repository's git log with the local repository by using git pull.
     ```shell
     git pull origin main
     ```
-19. This will prompt for username and password. Use `<tenancy name>/<username>` for the username and oci user auth token that was generated at the very start of this section for the password.
+20. This will prompt for username and password. Use `<tenancy name>/<username>` for the username and oci user auth token that was generated at the very start of this section for the password.
     ```shell
     Username for 'https://devops.scmservice.uk-london-1.oci.oraclecloud.com': tenancy_name/my.name@example.com
     Password for 'https://tenancyname/my.name@example.com@devops.scmservice.uk-london-1.oci.oraclecloud.com':
     ```
-20. Run the utility script from the main repository (`oci-devops-helidon-example`) to update the Config parameters:
+21. Run the utility script from the main repository (`oci-devops-helidon-example`) to update the Config parameters:
     ```shell
     ~/oci-devops-helidon-example/utils/update_config_values.sh
     ```
@@ -192,20 +200,20 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
     3. Update in `~/oci-mp/server/src/main/resources/META-INF/microprofile-config.properties` config file to set up `oci.bucket.name` property to contain the Object Storage bucket name that was provisioned by the terraform scripts that will be used in a later exercise to demonstrate Object Storage support from a Helidon application.
 
     **Note:** Make sure to validate that `application.yaml` and `microprofile-config.properties` has been updated by opening them from Code Editor and checking that the mentioned config parameters had been properly populated.
-21. Stage all the files for git commit
+22. Stage all the files for git commit
     ```shell
     git add .
     git status
     ```
-22. Perform the first commit
+23. Perform the first commit
     ```shell
     git commit -m "Helidon oci-mp first commit"
     ```
-23. Push the changes to the remote repository
+24. Push the changes to the remote repository
     ```shell
     git push -u origin main
     ```
-24. This will trigger the DevOps to start the pipeline. Go to the DevOps project from the OCI console and observe the build and deployment pipeline logs.
+25. This will trigger the DevOps to start the pipeline. Go to the DevOps project from the OCI console and observe the build and deployment pipeline logs.
 
 ### Demo the Helidon App:
 1. Access the application by using curl to do a GET & PUT http requests:
@@ -273,7 +281,7 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
         <artifactId>oci-java-sdk-objectstorage</artifactId>
     </dependency>
    ```
-3. Perform the following updates to `oci-mp/server/src/main/java/ocw/hol/mp/oci/server/GreetingProvider.java`.
+3. Perform the following updates to `oci-mp/server/src/main/java/demo/mp/oci/server/GreetingProvider.java`.
    1. Replace the existing GreetingProvider constructor method with the code that will have the following characteristics:
       1. From the constructor's argument section, add `ObjectStorage objectStorageClient` parameter. Since this is part of @Injected annotation, the parameter will automatically be processed and set by Helidon to contain the client which can be used to communicate with the Object Storage service without having to add several lines of OCI SDK code for that purpose. 
       2. From the same constructor's argument section, add ConfigProperty which will extract value from an `oci.bucket.name` property in the configuration. This has earlier been populated in `microprofile-config.properties` during the initial application setup when a utility script called `update_config_values.sh` was executed from the `oci-devops-helidon-example`  repository directory.
@@ -361,7 +369,7 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
       ```
    **Note:** Source code for this change can also be found in `~/oci-devops-helidon-example/source/GreetingProvider.java`. For example, if you want to instead copy the change over the existing file, it can be done this way from the root of `oci-mp` directory: 
     ```shell
-    cp ~/oci-devops-helidon-example/source/GreetingProvider.java server/src/main/java/ocw/hol/mp/oci/server/
+    cp ~/oci-devops-helidon-example/source/GreetingProvider.java server/src/main/java/demo/mp/oci/server/
     ```
 4. Commit and push the changes:
    ```shell
