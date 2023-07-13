@@ -291,10 +291,21 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
        ```shell
        {"message":"Hola World!","date":[2023,5,10]}
        ```
-3. Validate that the Helidon Metrics are pushed to the OCI Monitoring Service. Go to Observability & Management -> Metrics Explorer (under Monitoring). On Query 1, choose your compartment, select `helidon_metrics` under Metric Namespace, select on
-4. Show OCI Monitoring SDK integration to push custom metric to the Monitor Service
-5. Validate OCI Logging SDK integration to push message to the Logging Service by exploring the log `app-log-helidon-ocw-hol` on log-group `app-log-group-helidon-ocw-hol`.
-6. The Helidon oci-mp application adds Health Check feature to validate `liveness` and/or `readiness`. You can check `GreetLivenessCheck` and `GreetReadinessCheck` class files respectively in the project to see how they are done. This will particularly be useful when running the app as a microservice on an orchestrator environment like Kubernetes to determine if the microservice needs to be restarted if it is not healthy. Specific to this lab, the `readiness` check is leveraged in the `DevOps deployment pipeline spec` after the app is started to determine if the Helidon application started successfully. Check out code at [line #79 in deployment_spec.yaml](pipeline_specs/deployment_instance.yaml) to see it in action.
+3. Validate that the Helidon Metrics are pushed to the OCI Monitoring Service using the OCI metric integration that was added in the Helidon application:
+   1. From the OCI Console, go to `Observability & Management` -> Metrics Explorer (under Monitoring).
+   2. On Query 1, below the blank graph, choose the compartment with a value that has the format of  `devops-compartment-helidon-demo-<4 char random value>`.
+   3. Select `helidon_metrics` under Metric Namespace.
+   4. Select `requests.count_counter` under Metric Name
+   5. Above the empty graph, you can choose values for `Start time/End Time` or choose the time duration under `Quick Selects`.
+   6. Click `Update Chart` at the bottom of `Query 1` to show all the metric data for the `request count`.
+   7. You can also explore other Metrics by going back to step 4 and choosing a new value. 
+4. Validate OCI Logging SDK integration that was added in the Helidon application. This will push log messages to the OCI Logging Service:
+   1. From the OCI Console, go to `Observability & Management` -> `Logs (under Logging)`.
+   2. Change Compartment with a value that has the format of `devops-compartment-helidon-demo-<4 char random value>`.
+   3. Choose and click on `app-log-helidon-demo` from the Logs Table.
+   4. Choose `Filter by time` value within the scope of your last request. For example, you can choose `Today` to see all request that was made today.
+   5. The `Explore Log` display should output some graphs of the logging activity and will also show a table of the logs that has been captured.
+5. The Helidon oci-mp application adds Health Check feature to validate `liveness` and/or `readiness`. You can check `GreetLivenessCheck` and `GreetReadinessCheck` class files respectively in the project to see how they are done. This will particularly be useful when running the app as a microservice on an orchestrator environment like Kubernetes to determine if the microservice needs to be restarted if it is not healthy. Specific to this lab, the `readiness` check is leveraged in the `DevOps deployment pipeline spec` after the app is started to determine if the Helidon application started successfully. Check out code at [line #79 in deployment_spec.yaml](pipeline_specs/deployment_instance.yaml) to see it in action.
    1. If a compute instance was configured as the deployment target, i.e. `deployment_target` is set to `INSTANCE` or `ALL`:
       1. Set the endpoint using the instance's public ip:
          ```shell
