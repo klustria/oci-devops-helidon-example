@@ -220,6 +220,7 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
     1. Set the endpoint using the instance's public ip:
        ```shell
        export ENDPOINT_IP=$(~/oci-devops-helidon-example/main/get.sh public_ip)
+       echo "Instance public ip is $ENDPOINT_IP"
        ```
     2. Hello world request:
        ```shell
@@ -250,6 +251,7 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
     1. Set the endpoint using the LoadBalancer's external IP:
        ```shell
        export ENDPOINT_IP=$(kubectl --kubeconfig=$HOME/oci-devops-helidon-example/main/generated/kubeconfig get services oci-mp-server -o jsonpath='{.status.loadBalancer.ingress[].ip}')
+       echo "Kubernetes LoadBalancer ip is $ENDPOINT_IP"
        ```
     2. Hello world request:
        ```shell
@@ -284,6 +286,7 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
       1. Set the endpoint using the instance's public ip:
          ```shell
          export ENDPOINT_IP=$(~/oci-devops-helidon-example/main/get.sh public_ip)
+         echo "Instance public ip is $ENDPOINT_IP"
          ```
       2. Liveness Check
          ```shell
@@ -305,6 +308,7 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
        1. Set the endpoint using the LoadBalancer's external IP:
           ```shell
           export ENDPOINT_IP=$(kubectl --kubeconfig=$HOME/oci-devops-helidon-example/main/generated/kubeconfig get services oci-mp-server -o jsonpath='{.status.loadBalancer.ingress[].ip}')
+          echo "Kubernetes LoadBalancer ip is $ENDPOINT_IP"
           ```
        2. Liveness Check
           ```shell
@@ -435,6 +439,7 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
    1. Set up the deployment node public ip as an environment variable:
       ```shell
       export ENDPOINT_IP=$(~/oci-devops-helidon-example/main/get.sh public_ip)
+      echo "Instance public ip is $ENDPOINT_IP"
       ```
    2. Call default Hello world request:
       ```shell
@@ -480,6 +485,7 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
     1. Set the endpoint using the LoadBalancer's external IP:
        ```shell
        export ENDPOINT_IP=$(kubectl --kubeconfig=$HOME/oci-devops-helidon-example/main/generated/kubeconfig get services oci-mp-server -o jsonpath='{.status.loadBalancer.ingress[].ip}')
+       echo "Kubernetes LoadBalancer ip is $ENDPOINT_IP"
        ```
     2. Call default Hello world request:
        ```shell

@@ -4,7 +4,7 @@
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
 SCRIPT_DIR=$(dirname $0)
-PUBLIC_IP=$(~/devops_helidon_to_instance_ocw_hol/main/get.sh public_ip)
+PUBLIC_IP=$(~/oci-devops-helidon-example/main/get.sh public_ip)
 GET_SH=${SCRIPT_DIR}/../main/get.sh
 
 # Generate private key
