@@ -447,7 +447,7 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
       import com.oracle.bmc.objectstorage.responses.GetNamespaceResponse;
       import com.oracle.bmc.objectstorage.responses.GetObjectResponse;
       ```
-   **Note:** Source code for this change can also be found in `~/oci-devops-helidon-example/source/GreetingProvider.java`. You can use that to compare the changes you've gone through. Alternatively, you can also just copy that file over the existing file. For example you can do this from the root of `oci-mp` directory: 
+   **Note:** Source code for this change can also be found in `~/oci-devops-helidon-example/source/GreetingProvider.java`. You can use that to compare the changes you've gone through. Alternatively, you can also just copy that file over the existing file. For example, you can do this from the root of `oci-mp` directory: 
     ```shell
     cp ~/oci-devops-helidon-example/source/GreetingProvider.java server/src/main/java/demo/mp/oci/server/
     ```
@@ -559,16 +559,16 @@ When the environment is no longer needed, all the OCI resources can be cleaned u
       ```shell
       cd main
       ```
-   2. Run the destroy script   
+   2. Run the destroy script. This will remove all artifacts stored in the artifact repository, remove kubernetes service (which will also remove the provisioned LoadBalancer) and deployment from OKE, if they exist, and finally will destroy all the OCI resources created by the terraform script.    
       ```
       destroy.sh
       ```
 3. Cleaning up the created compartment, dynamic-groups, groups and policies. 
-   1. From the same terminal, change directory to init
+   1. From the same terminal, change directory to init.
       ```shell
       cd ../init
       ```
-   2. Run the destroy command from terraform
+   2. Run the destroy command from terraform.
       ```shell
       terraform destroy -auto-approve
       ```   
