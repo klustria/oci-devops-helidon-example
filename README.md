@@ -1,6 +1,6 @@
 # Using OCI DevOps to build and deploy a Java-based Helidon MP Application
 
-This example shows how to pair Helidon with OCI DevOps pipeline to build a quick start Helidon MP application and deploy to either an OCI Instance, an OKE Cluster or both.
+This example will demonstrate how to pair Helidon with OCI DevOps pipeline to build a quick start Helidon MP application and deploy to either an OCI Instance, an OKE Cluster or both.
 
 ## Objective
 1. Create an OCI DevOps project that will build and deploy a Helidon MP application example.
@@ -78,21 +78,33 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
    * OCI DevOps Service
      1. `OCI DevOps Project` that will contain all the DevOps components needed for this project. 
      2. `OCI Code Repository` that will host the Application source code project.
-     3. `DevOps Build Pipeline` with the following stages:
-        1. Manage Build - executes steps to download JDK20, maven and building the Helidon application
-        2. Deliver Artifacts - Uploads the built Helidon app and the Deployment to the Artifact Repository
-        3. Trigger Deployment - Triggers the Deployment Pipeline
-     4. `DevOps Deployment Pipeline` that will perform the following on the target environment:
+     3. `DevOps Build Pipeline` for the `INSTANCE` if configured, with the following stages:
+        1. Manage Build - Executes steps to download JDK20, maven and building the Helidon application.
+        2. Deliver Artifacts - Uploads the built Helidon app and the Deployment spec to the Artifact Repository.
+        3. Trigger Deployment - Triggers the Instance's Deployment Pipeline.
+     4. `DevOps Deployment Pipeline` for the `INSTANCE` if configured, that will perform the following on the target environment:
         1. Download JDK20
         2. Install OCI CLI and use it to download the Application Deliverable
         3. Run the Application
-     5. `DevOps Instance Group environment` that will be used by the `Deployment Pipeline` to identify the created `OCI Compute Instance` as the deployment target.
-     6. `DevOps Trigger` that will invoke the pipeline lifecycle from start to finish when a push event occurs on the `OCI Code Repository`.
+     5. `DevOps Build Pipeline` for `OKE` if configured, with the following stages:
+        1. Manage Build - Executes a Dockerfile to build the application  as a Docker image.
+        2. Deliver Artifacts - Uploads image to the Container Registry  and the Deployment spec to the Artifact Repository
+        3. Trigger Deployment - Triggers the OKE's Deployment Pipeline.
+     6. `DevOps Deployment Pipeline` for `OKE` if configured, that will perform the following on the target environment:
+        1. Create a Kubernetes service with LoadBalancer type.
+        2. Create a Kubernetes deployment using the built docker image
+     7. `DevOps Trigger` for the `INSTANCE` and `OKE`, whichever is configured, that will invoke the pipeline lifecycle from start to finish when a push event occurs on the `OCI Code Repository`.
    * OCI Artifact Registry
-      1. `OCI Artifact Repository` that will host the built Helidon App Binaries and Deployment Manifest as versioned artifacts.   
+     1. `OCI Artifact Repository` that will host the built Helidon App Binaries and Deployment Manifest as versioned artifacts.
+     2. `OCI Container Registry` that will host the built Helidon App as a versioned Docker image. 
    * OCI Platfrom
-      1. `OCI Compute Instance` that opens port 8080 from the firewall. This is where the application will be eventually deployed.
-      2. `OCI Virtual Cloud Network (VCN)` with `Security List` containing an Ingress that opens port 8080. Port 8080 is where the Helidon application will be accessed from. The `OCI VCN` will be used by the `OCI Compute Instance` for its network needs.
+     1. `INSTANCE` if configured
+        1. `OCI Compute Instance` that opens port 8080 from the firewall. This is where the application will be eventually deployed.
+        2. `OCI Virtual Cloud Network (VCN)` with `Security List` containing an Ingress that opens port 8080. Port 8080 is where the Helidon application will be accessed from. The `OCI VCN` will be used by the `OCI Compute Instance` for its network needs.
+     2. `OKE` if configured
+        1. `OKE Cluster` that will host the application as a Kubernetes deployment.
+        2. `OKE Node Pool` with 1 worker node.
+        3. `OCI Virtual Cloud Network (VCN)` with `Subnets` and `Security Lists` for the Kubernetes API endpoint, Worker Node, and LoadBalancer.
 5. Diagram below depicts how the DevOps setup will work: 
 
    ![](./images/devops-diagram.png)
@@ -527,9 +539,9 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
        {"message":"Bonjour World!","date":[2023,5,10]}
        ```      
 
-### Destroy the Deployment
+### Environment Cleanup
 When the environment is no longer needed, all the OCI resources can be cleaned up by following these steps:
-1. Go back to Code Editor and reopen `oci-devops-helidon-example`, followed by opening a terminal
+1. Go back to Code Editor and reopen `oci-devops-helidon-example` project, followed by opening a terminal.
 2. Cleaning up all resources used for the DevOps demo.
    1. From the terminal, change directory to main to destroy all the resources created for DevOps.
       ```shell
