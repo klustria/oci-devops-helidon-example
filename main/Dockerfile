@@ -1,6 +1,5 @@
 
 # 1st stage, build the app
-# FROM maven:3.8.4-openjdk-17-slim as build
 FROM container-registry.oracle.com/java/openjdk:20 as build
 
 # Install maven
@@ -32,7 +31,6 @@ RUN mvn package -DskipTests
 RUN echo "done!"
 
 # 2nd stage, build the runtime image
-# FROM openjdk:17-jdk-slim
 FROM container-registry.oracle.com/java/openjdk:20
 WORKDIR /helidon
 

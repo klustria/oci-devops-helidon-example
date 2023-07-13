@@ -170,9 +170,9 @@ resource "oci_devops_deploy_artifact" "devops_instance_application_artifact" {
 #### End of deploy artifacts code #####
 
 # Create a trigger to start the pipeline if code repository push event occurs
-resource "oci_devops_trigger" "devops_trigger" {
+resource "oci_devops_trigger" "devops_instance_trigger" {
   project_id     = var.devops_project_id
-  display_name   = "devops-trigger${var.resource_name_suffix}"
+  display_name   = "devops-instance-trigger${var.resource_name_suffix}"
   description    = "Will trigger start of pipeline when push event on the code repository takes place"
   trigger_source = "DEVOPS_CODE_REPOSITORY"
   repository_id  = var.devops_repo_id

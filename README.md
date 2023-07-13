@@ -1,12 +1,12 @@
 # Using OCI DevOps to build and deploy a Java-based Helidon MP Application
 
-This document provides a rough description of the steps that will be used to demonstrate a Hands On Lab setting up OCI DevOps working Helidon to create a full
-CICD Pipeline Environment
+This example shows how to pair Helidon with OCI DevOps pipeline to build a quick start Helidon MP application and deploy to either an OCI Instance, an OKE Cluster or both.
 
 ## Objective
 1. Create an OCI DevOps project that will build and deploy a Helidon MP application example.
-2. Simulate a patching scenario where OpenJDK is switched to Oracle JDK.
-3. Modify the Helidon application to add Object Storage integration.
+2. Create an Instance Group or OKE Cluster deployment targets.
+3. Use Terraform to create automation of OCI resources provisioning that will be needed to build the DevOps environment.
+4. Provide a quick tutorial on how to add OCI Object Storage integration into a Helidon application.
 
 ## Prerequisite
 - An OCI tenancy that can provision a Compute Node and work with the DevOps Service such as a paid service. This will also work on the free trial of the [OCI Free Tier](https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier.htm) which will only be  valid up to 30 days after sign-up.
@@ -153,7 +153,7 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
     ```shell
     cp ~/oci-devops-helidon-example/.gitignore .
     ```
-14. Copy the `Dockerfile` that will be used to create the application as a Docker image if the deployment target is OKE, otherwise this step can be skipped.
+14. Copy the `Dockerfile` and replace the existing. This will be used to create the application as a Docker image if the deployment target is OKE, otherwise this step can be skipped. This step will also not be needed in a future version of the Helidon archetype as it will generate the proper Dockerfile.
     ```shell
     cp ~/oci-devops-helidon-example/main/Dockerfile .
     ```
@@ -215,8 +215,8 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
     ```
 25. This will trigger the DevOps to start the pipeline. Go to the DevOps project from the OCI console and observe the build and deployment pipeline logs.
 
-### Demo the Helidon App:
-1. If the instance was configured as the deployment target, i.e. `deployment_target` is set to `INSTANCE` or `ALL`, access the application by using curl to do a GET & PUT http requests.
+### Exercise the deployed Helidon application:
+1. If a compute instance was configured as the deployment target, i.e. `deployment_target` is set to `INSTANCE` or `ALL`, access the application by using curl to do a GET & PUT http requests.
     1. Set the endpoint using the instance's public ip:
        ```shell
        export ENDPOINT_IP=$(~/oci-devops-helidon-example/main/get.sh ENDPOINT_IP)
@@ -280,27 +280,49 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
 4. Show OCI Monitoring SDK integration to push custom metric to the Monitor Service
 5. Validate OCI Logging SDK integration to push message to the Logging Service by exploring the log `app-log-helidon-ocw-hol` on log-group `app-log-group-helidon-ocw-hol`.
 6. The Helidon oci-mp application adds Health Check feature to validate `liveness` and/or `readiness`. You can check `GreetLivenessCheck` and `GreetReadinessCheck` class files respectively in the project to see how they are done. This will particularly be useful when running the app as a microservice on an orchestrator environment like Kubernetes to determine if the microservice needs to be restarted if it is not healthy. Specific to this lab, the `readiness` check is leveraged in the `DevOps deployment pipeline spec` after the app is started to determine if the Helidon application started successfully. Check out code at [line #79 in deployment_spec.yaml](pipeline_specs/deployment_instance.yaml) to see it in action.
-   1. Set ENDPOINT_IP value
-      ```shell
-      export ENDPOINT_IP=$(~/oci-devops-helidon-example/main/get.sh ENDPOINT_IP)
-      ```
-   2. Liveness Check
-      ```shell
-      curl http://$ENDPOINT_IP:8080/health/live
-      ```
-      results to:
-      ```shell
-      {"status":"UP","checks":[{"name":"CustomLivenessCheck","status":"UP","data":{"time":1684391639448}}]}
-      ```
-   3. Readiness Check
-       ```shell
-      curl http://$ENDPOINT_IP:8080/health/ready
-      ```
-      results to:
-      ```shell
-      {"status":"UP","checks":[{"name":"CustomReadinessCheck","status":"UP","data":{"time":1684391438298}}]}
-      ```     
-
+   1. If a compute instance was configured as the deployment target, i.e. `deployment_target` is set to `INSTANCE` or `ALL`:
+      1. Set the endpoint using the instance's public ip:
+         ```shell
+         export ENDPOINT_IP=$(~/oci-devops-helidon-example/main/get.sh ENDPOINT_IP)
+         ```
+      2. Liveness Check
+         ```shell
+         curl http://$ENDPOINT_IP:8080/health/live
+         ```
+         results to:
+         ```shell
+         {"status":"UP","checks":[{"name":"CustomLivenessCheck","status":"UP","data":{"time":1684391639448}}]}
+         ```
+      3. Readiness Check
+          ```shell
+         curl http://$ENDPOINT_IP:8080/health/ready
+         ```
+         results to:
+         ```shell
+         {"status":"UP","checks":[{"name":"CustomReadinessCheck","status":"UP","data":{"time":1684391438298}}]}
+         ```     
+   2. If OKE was configured as the deployment target, i.e. `deployment_target` is set to `OKE` or `ALL`:
+       1. Set the endpoint using the LoadBalancer's external IP:
+          ```shell
+          export ENDPOINT_IP=$(~/oci-devops-helidon-example/main/get.sh ENDPOINT_IP)
+          ```
+       2. Liveness Check
+          ```shell
+          curl http://$ENDPOINT_IP:8080/health/live
+          ```
+          results to:
+          ```shell
+          {"status":"UP","checks":[{"name":"CustomLivenessCheck","status":"UP","data":{"time":1684391639448}}]}
+          ```
+       3. Readiness Check
+           ```shell
+          curl http://$ENDPOINT_IP:8080/health/ready
+          ```
+          results to:
+          ```shell
+          {"status":"UP","checks":[{"name":"CustomReadinessCheck","status":"UP","data":{"time":1684391438298}}]}
+          ``` 
+       
 ### Modify Helidon application code to add Object Storage support.
 The objective of this exercise is to demonstrate how to add Object Storage access from the Helidon code. This is done by replacing a variable which is used to store the greeting word with an object that will now become the new greeting word container and is stored and retrieved from an Object Storage bucket. Since the object is persisted, the last greeting word value will survive application restarts. Without this change and with greeting word in memory via the variable, the greeting word will reset to default value when the application is restarted.
 1. Make sure that Code Editor is open with `oci-mp` local directory as the active workspace
@@ -409,7 +431,7 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
    git push
    ```
 5. Wait until the DevOps lifecycle is completed by monitoring the build and deployment pipeline logs.   
-6. Test by using curl and check that a new `hello.txt` object has been added in the bucket. Validate that the size of the object is the same as the size of the greeting word. For example, if the greeting  word is `Hello`, then the size should be 5. If the greeting word is `Hola`, then the size should be 4.
+6. If a compute instance was configured as the deployment target, i.e. `deployment_target` is set to `INSTANCE` or `ALL`, test it by using curl and check that a new `hello.txt` object has been added in the bucket. Validate that the size of the object is the same as the size of the greeting word. For example, if the greeting  word is `Hello`, then the size should be 5. If the greeting word is `Hola`, then the size should be 4.
    1. Set up the deployment node public ip as an environment variable:
       ```shell
       export ENDPOINT_IP=$(~/oci-devops-helidon-example/main/get.sh ENDPOINT_IP)
@@ -454,11 +476,60 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
       ```shell
       {"message":"Hola World!","date":[2023,5,10]}
       ```
+7. If OKE was configured as the deployment target, i.e. `deployment_target` is set to `OKE` or `ALL`, test it by using curl and check that a new `hello.txt` object has been added in the bucket. Validate that the size of the object is the same as the size of the greeting word. For example, if the greeting  word is `Hello`, then the size should be 5. If the greeting word is `Hola`, then the size should be 4. 
+    1. Set up the deployment node public ip as an environment variable:
+       ```shell
+       export ENDPOINT_IP=$(~/oci-devops-helidon-example/main/get.sh ENDPOINT_IP)
+       ```
+    2. Call default Hello world request:
+       ```shell
+       curl http://$ENDPOINT_IP:8080/greet
+       ```
+       If testing against instance deployment was completed from the previous step, this will result to:
+       ```shell
+       {"message":"Hola World!","date":[2023,5,10]}
+       ```
+       If  this is the first time, this will be ran, this will result to:
+       ```shell
+       {"message":"Hello World!","date":[2023,5,10]}
+       ```
+    3. Check that the bucket contains an object `hello.txt` and has a size of 4 bytes if the greeting word is `Hola` and  5 bytes if it is `Hello`. You can also download the object and verify that the content is indeed `Hello.
+    4. Replace greeting word with `Bonjour`:
+       ```shell
+       curl -X PUT -H "Content-Type: application/json" -d '{"greeting" : "Bonjour"}' http://$ENDPOINT_IP:8080/greet/greeting 
+       curl http://$ENDPOINT_IP:8080/greet
+       ```
+       results to:
+       ```shell
+       {"message":"Bonjour World!","date":[2023,5,10]}
+       ```
+    5. Check that the bucket's `hello.txt` object now has a size of 7 bytes because the greeting word is replaced with `Bonjour`. You can also download the object and verify that the content is now changed to `Bonjour`.
+    6. Restart the application by restarting the Kubernetes deployment. This is to demonstrate that the value of the greeting word will survive as it is persisted in the Object Storage.
+       ```shell
+       kubectl --kubeconfig=${HOME}/oci-devops-helidon-example/main/generated/kubeconfig rollout restart deployment oci-mp-server
+       ```
+       which will show an output like below if restart succeeds:
+       ```shell
+       Created private.key and can be used to ssh to the deployment instance by running this command: "ssh -i private.key opc@xxx.xxx.xx.xxxx"
+       FIPS mode initialized
+       Stopping oci-mp-server.jar with pid 999990
+       Starting oci-mp-server.jar
+       Helidon app is now running with pid 999991!
+       Cleaning up ssh private.key
+       ```
+    7. Call default Hello world request and observe that the greeting word is still `Bonjour`.
+       ```shell
+       curl http://$ENDPOINT_IP:8080/greet
+       ```
+       results to:
+       ```shell
+       {"message":"Bonjour World!","date":[2023,5,10]}
+       ```      
 
 ### Destroy the Deployment
 When the environment is no longer needed, all the OCI resources can be cleaned up by following these steps:
 1. Go back to Code Editor and reopen `oci-devops-helidon-example`, followed by opening a terminal
-2. Cleaning up all resources used for DevOps demo.
+2. Cleaning up all resources used for the DevOps demo.
    1. From the terminal, change directory to main to destroy all the resources created for DevOps.
       ```shell
       cd main
@@ -467,7 +538,7 @@ When the environment is no longer needed, all the OCI resources can be cleaned u
       ```
       destroy.sh
       ```
-3. Cleaning up compartment, dynamic-groups, groups and policies. 
+3. Cleaning up the created compartment, dynamic-groups, groups and policies. 
    1. From the same terminal, change directory to init
       ```shell
       cd ../init
