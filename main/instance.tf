@@ -5,6 +5,7 @@ module "instance-deployment" {
   count                   = length(regexall("(?i)^(INSTANCE|ALL)$", var.deployment_target)) > 0 ? 1 : 0
   source                  = "./instance"
   availablity_domain_name = var.availablity_domain_name == "" ? data.oci_identity_availability_domains.ads.availability_domains[0]["name"] : var.availablity_domain_name
+  ssh_public_key          = var.ssh_public_key == "" ? tls_private_key.public_private_key_pair.public_key_openssh : var.ssh_public_key
   compartment_ocid        = var.compartment_ocid
   resource_name_suffix    = local.resource_name_suffix
   artifact_repository_id  = oci_artifacts_repository.artifact_repo.id

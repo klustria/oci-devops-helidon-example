@@ -476,10 +476,10 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
       ```shell
       {"message":"Hola World!","date":[2023,5,10]}
       ```
-7. If OKE was configured as the deployment target, i.e. `deployment_target` is set to `OKE` or `ALL`, test it by using curl and check that a new `hello.txt` object has been added in the bucket. Validate that the size of the object is the same as the size of the greeting word. For example, if the greeting  word is `Hello`, then the size should be 5. If the greeting word is `Hola`, then the size should be 4. 
-    1. Set up the deployment node public ip as an environment variable:
+7. If OKE was configured as the deployment target, i.e. `deployment_target` is set to `OKE` or `ALL`, test it by using curl and check that a new `hello.txt` object has been added in the bucket. Validate that the size of the object is the same as the size of the greeting word. For example, if the greeting  word is `Hello`, then the size should be 5. If the greeting word is `Hola`, then the size should be 4.
+    1. Set the endpoint using the LoadBalancer's external IP:
        ```shell
-       export ENDPOINT_IP=$(~/oci-devops-helidon-example/main/get.sh public_ip)
+       export ENDPOINT_IP=$(kubectl --kubeconfig=$HOME/oci-devops-helidon-example/main/generated/kubeconfig get services oci-mp-server -o jsonpath='{.status.loadBalancer.ingress[].ip}')
        ```
     2. Call default Hello world request:
        ```shell
@@ -489,11 +489,11 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
        ```shell
        {"message":"Hola World!","date":[2023,5,10]}
        ```
-       If  this is the first time, this will be ran, this will result to:
+       If this is the first time this will be run, this will result to:
        ```shell
        {"message":"Hello World!","date":[2023,5,10]}
        ```
-    3. Check that the bucket contains an object `hello.txt` and has a size of 4 bytes if the greeting word is `Hola` and  5 bytes if it is `Hello`. You can also download the object and verify that the content is indeed `Hello.
+    3. Check that the bucket contains an object `hello.txt` and has a size of 4 bytes if the greeting word is `Hola` and 5 bytes if it is `Hello`. You can also download the object and verify that the content is correct.
     4. Replace greeting word with `Bonjour`:
        ```shell
        curl -X PUT -H "Content-Type: application/json" -d '{"greeting" : "Bonjour"}' http://$ENDPOINT_IP:8080/greet/greeting 
@@ -510,12 +510,7 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
        ```
        which will show an output like below if restart succeeds:
        ```shell
-       Created private.key and can be used to ssh to the deployment instance by running this command: "ssh -i private.key opc@xxx.xxx.xx.xxxx"
-       FIPS mode initialized
-       Stopping oci-mp-server.jar with pid 999990
-       Starting oci-mp-server.jar
-       Helidon app is now running with pid 999991!
-       Cleaning up ssh private.key
+       deployment.apps/oci-mp-server restarted
        ```
     7. Call default Hello world request and observe that the greeting word is still `Bonjour`.
        ```shell
