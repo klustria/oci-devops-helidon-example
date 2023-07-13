@@ -7,9 +7,10 @@ This example will demonstrate how to pair Helidon with OCI DevOps pipeline to bu
 2. Create an Instance Group or OKE Cluster deployment targets.
 3. Use Terraform to create automation of OCI resources provisioning that will be needed to build the DevOps environment.
 4. Provide a quick tutorial on how to add OCI Object Storage integration into a Helidon application.
+5. Use OCI cloud-shell to run this example through. 
 
 ## Prerequisite
-- An OCI tenancy that can provision a Compute Node and work with the DevOps Service such as a paid service. This will also work on the free trial of the [OCI Free Tier](https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier.htm) which will only be  valid up to 30 days after sign-up.
+- An OCI tenancy that can provision a Compute Node and work with the DevOps Service such as a paid service. This will also work on the free trial of the [OCI Free Tier](https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier.htm).
 
 ## Tasks
 ### Set up Cloud Shell/Cloud Editor access.
@@ -40,7 +41,7 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
    * `region` - From OCI Console's home screen, open the `Region` menu, and then click `Manage Regions`. Locate the Home Region and copy the Region identifier.
    * `user_ocid` - This can be retrieved by opening the `Profile` menu and clicking on `My Profile`. Under `User information`, click `Show` to display the entire ID or click `Copy` to copy it to your clipboard.
 
-   **Note:** Ensure that `region` reflects your home region as this exercise will not work in other regions. If DevOps resources provisioning, that will be performed in the next section will be done on the same home region, then use the `region` parameter for this purpose. However, if the intention is to target DevOps provisioning on a different non-home region, then for this step, set the value of the `home_region` parameter instead.
+   **Note:** Ensure that `region` reflects your home region as this exercise will not work in other regions. If DevOps resources provisioning, that will be performed in the next section, will be done on the same home region, then use the `region` parameter for this purpose. However, if the intention is to target DevOps provisioning on a different non-home region, then for this step, set the value of the `home_region` parameter instead.
 3. Go to the `init` directory.
    ```shell
    cd init
@@ -52,8 +53,8 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
    terraform apply -auto-approve
    ```
 ### Provision all resources required to set up the OCI DevOps.
-1. Open `oci-devops-helidon-example` from Code Editor.
-2. From the root directory of the cloned repository, open `terraform.tfvars` and fill up the values of the following variables:
+1. Open `oci-devops-helidon-example` project from Code Editor.
+2. From the root directory of the project, open `terraform.tfvars` and fill up the values of the following variables:
    * `tenancy_ocid` - If already set from the previous exercise, leave as is. Otherwise, this can be retrieved by opening the `Profile` menu and click `Tenancy: <your_tenancy_name>`. The tenancy OCID is shown under `Tenancy Information`. Click `Show` to display the entire ID or click `Copy` to copy it to your clipboard.
    * `region` - If already set from the previous exercise, leave as is. Otherwise, from OCI Console's home screen, open the `Region` menu, and then click `Manage Regions`. Locate the Home Region and copy the Region identifier.
    * `compartment_ocid` - This can be automatically populated by running the tool `update_compartment.sh` or otherwise, value can be retrieved from the previous exercise's terraform output.
@@ -74,7 +75,7 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
     terraform plan
     terraform apply -auto-approve
     ```
-   This will provision the following resources required for DevOps:
+   This will provision the following resources:
    * OCI DevOps Service
      1. `OCI DevOps Project` that will contain all the DevOps components needed for this project. 
      2. `OCI Code Repository` that will host the Application source code project.
@@ -97,11 +98,11 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
    * OCI Artifact Registry
      1. `OCI Artifact Repository` that will host the built Helidon App Binaries and Deployment Manifest as versioned artifacts.
      2. `OCI Container Registry` that will host the built Helidon App as a versioned Docker image. 
-   * OCI Platfrom
-     1. `INSTANCE` if configured
+   * OCI Platform
+     1. `INSTANCE` if configured.
         1. `OCI Compute Instance` that opens port 8080 from the firewall. This is where the application will be eventually deployed.
         2. `OCI Virtual Cloud Network (VCN)` with `Security List` containing an Ingress that opens port 8080. Port 8080 is where the Helidon application will be accessed from. The `OCI VCN` will be used by the `OCI Compute Instance` for its network needs.
-     2. `OKE` if configured
+     2. `OKE` if configured.
         1. `OKE Cluster` that will host the application as a Kubernetes deployment.
         2. `OKE Node Pool` with 1 worker node.
         3. `OCI Virtual Cloud Network (VCN)` with `Subnets` and `Security Lists` for the Kubernetes API endpoint, Worker Node, and LoadBalancer.
@@ -194,8 +195,8 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
     ```
 20. This will prompt for username and password. Use `<tenancy name>/<username>` for the username and oci user auth token that was generated at the very start of this section for the password.
     ```shell
-    Username for 'https://devops.scmservice.uk-london-1.oci.oraclecloud.com': tenancy_name/my.name@example.com
-    Password for 'https://tenancyname/my.name@example.com@devops.scmservice.uk-london-1.oci.oraclecloud.com':
+    Username for 'https://devops.scmservice.us-ashburn-1.oci.oraclecloud.com': tenancy_name/my.name@example.com
+    Password for 'https://tenancyname/my.name@example.com@devops.scmservice.us-ashburn-1.oci.oraclecloud.com':
     ```
 21. Run the utility script from the main repository (`oci-devops-helidon-example`) to update the Config parameters:
     ```shell
@@ -435,7 +436,7 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
       import com.oracle.bmc.objectstorage.responses.GetNamespaceResponse;
       import com.oracle.bmc.objectstorage.responses.GetObjectResponse;
       ```
-   **Note:** Source code for this change can also be found in `~/oci-devops-helidon-example/source/GreetingProvider.java`. For example, if you want to instead copy the change over the existing file, it can be done this way from the root of `oci-mp` directory: 
+   **Note:** Source code for this change can also be found in `~/oci-devops-helidon-example/source/GreetingProvider.java`. You can use that to compare the changes you've gone through. Alternatively, you can also just copy that file over the existing file. For example you can do this from the root of `oci-mp` directory: 
     ```shell
     cp ~/oci-devops-helidon-example/source/GreetingProvider.java server/src/main/java/demo/mp/oci/server/
     ```
