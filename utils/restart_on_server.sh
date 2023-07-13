@@ -19,7 +19,7 @@ start_time="$(date -u +%s)"
 while true; do
 curl -s http://localhost:8080/health/ready | grep -q '"status":"UP"'
 if [ $? -eq 0 ]; then
-  echo "Helidon app is now running with pid $(ps -fe | grep ${HELIDON_APP_NAME} | grep -v bash | grep -v grep | awk '{print $2}')!"
+  echo "Helidon app is now running with pid $(ps -fe | grep ${HELIDON_APP_NAME} | grep -v -e bash -e grep | awk '{print $2}')!"
   break
 fi
 current_time="$(date -u +%s)"
