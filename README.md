@@ -219,7 +219,7 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
 1. If a compute instance was configured as the deployment target, i.e. `deployment_target` is set to `INSTANCE` or `ALL`, access the application by using curl to do a GET & PUT http requests.
     1. Set the endpoint using the instance's public ip:
        ```shell
-       export ENDPOINT_IP=$(~/oci-devops-helidon-example/main/get.sh ENDPOINT_IP)
+       export ENDPOINT_IP=$(~/oci-devops-helidon-example/main/get.sh public_ip)
        ```
     2. Hello world request:
        ```shell
@@ -249,7 +249,7 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
 2. If OKE was configured as the deployment target, i.e. `deployment_target` is set to `OKE` or `ALL`, access the application by using curl to do GET & PUT rest requests.
     1. Set the endpoint using the LoadBalancer's external IP:
        ```shell
-       export ENDPOINT_IP=$(kubectl --kubeconfig=~/oci-devops-helidon-example/main/generated/kubeconfig get services oci-mp-server -o jsonpath='{. status.loadBalancer.ingress[].ip}')
+       export ENDPOINT_IP=$(kubectl --kubeconfig=$HOME/oci-devops-helidon-example/main/generated/kubeconfig get services oci-mp-server -o jsonpath='{.status.loadBalancer.ingress[].ip}')
        ```
     2. Hello world request:
        ```shell
@@ -283,7 +283,7 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
    1. If a compute instance was configured as the deployment target, i.e. `deployment_target` is set to `INSTANCE` or `ALL`:
       1. Set the endpoint using the instance's public ip:
          ```shell
-         export ENDPOINT_IP=$(~/oci-devops-helidon-example/main/get.sh ENDPOINT_IP)
+         export ENDPOINT_IP=$(~/oci-devops-helidon-example/main/get.sh public_ip)
          ```
       2. Liveness Check
          ```shell
@@ -304,7 +304,7 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
    2. If OKE was configured as the deployment target, i.e. `deployment_target` is set to `OKE` or `ALL`:
        1. Set the endpoint using the LoadBalancer's external IP:
           ```shell
-          export ENDPOINT_IP=$(~/oci-devops-helidon-example/main/get.sh ENDPOINT_IP)
+          export ENDPOINT_IP=$(kubectl --kubeconfig=$HOME/oci-devops-helidon-example/main/generated/kubeconfig get services oci-mp-server -o jsonpath='{.status.loadBalancer.ingress[].ip}')
           ```
        2. Liveness Check
           ```shell
@@ -434,7 +434,7 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
 6. If a compute instance was configured as the deployment target, i.e. `deployment_target` is set to `INSTANCE` or `ALL`, test it by using curl and check that a new `hello.txt` object has been added in the bucket. Validate that the size of the object is the same as the size of the greeting word. For example, if the greeting  word is `Hello`, then the size should be 5. If the greeting word is `Hola`, then the size should be 4.
    1. Set up the deployment node public ip as an environment variable:
       ```shell
-      export ENDPOINT_IP=$(~/oci-devops-helidon-example/main/get.sh ENDPOINT_IP)
+      export ENDPOINT_IP=$(~/oci-devops-helidon-example/main/get.sh public_ip)
       ```
    2. Call default Hello world request:
       ```shell
@@ -479,7 +479,7 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
 7. If OKE was configured as the deployment target, i.e. `deployment_target` is set to `OKE` or `ALL`, test it by using curl and check that a new `hello.txt` object has been added in the bucket. Validate that the size of the object is the same as the size of the greeting word. For example, if the greeting  word is `Hello`, then the size should be 5. If the greeting word is `Hola`, then the size should be 4. 
     1. Set up the deployment node public ip as an environment variable:
        ```shell
-       export ENDPOINT_IP=$(~/oci-devops-helidon-example/main/get.sh ENDPOINT_IP)
+       export ENDPOINT_IP=$(~/oci-devops-helidon-example/main/get.sh public_ip)
        ```
     2. Call default Hello world request:
        ```shell
