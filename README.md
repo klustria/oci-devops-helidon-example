@@ -20,7 +20,7 @@ This example will demonstrate how to pair Helidon with OCI DevOps pipeline to bu
    ```
    Allow group '<my_cloud_shell_access_group>' to use cloud-shell in tenancy
    ```
-4. Verify that it works by opening the OCI Code Editor
+4. Verify that it works by opening the OCI Code Editor from the OCI Console.
 
 ### Clone the main repository for this lab exercise
 1. Start the OCI Code Editor if it is not yet open.
@@ -111,7 +111,7 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
    ![](./images/devops-diagram.png)
     
 ### Prepare the Helidon Application:
-1. Generate an auth token that will be used to access the DevOps code repository. From the OCI Console's home screen, open the Profile menu and click My Profile. Under `Resources`, click on `Auth tokens` and then click `Generate token` and fill in the `Description`. A new window will open with a notice to `Copy the generated token as it will not be shown again`. Do so and ensure to keep it in a safe place for future usage.
+1. Generate an auth token that will be used to access the DevOps code repository. From the OCI Console's home screen, open the Profile menu and click `My Profile`. Under `Resources`, click on `Auth tokens`, followed by clicking `Generate token` and fill in the `Description`. A new window will open with a notice to `Copy the generated token as it will not be shown again`. Do so and ensure to keep it in a safe place for future usage.
 2. Go to the home directory
    ```shell
    cd ~
@@ -226,16 +226,22 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
     ```shell
     git push -u origin main
     ```
-25. This will trigger the DevOps to start the pipeline. Go to the DevOps project from the OCI console and observe the build and deployment pipeline logs.
+25. This will trigger the DevOps to start the pipeline. 
+    1. From the OCI Console, go to `Developer Services` -> `Projects (under DevOps)`.
+    2. Choose the `Compartment` value that has the format of `devops-compartment-helidon-demo-<4 char random value>`.
+    3. Click on the project that is displayed with the name format of `devops-project-helidon-demo-<4 char random value>`.
+    4. Scroll down to the `Latest Build History` and wait until the Status of the runs turn to `Succeeded`. You can also click on the specific runs to observe the progress of the build pipelines.
+    5. Scroll down to the `Latest deployments` and wait until the Status of the runs turn to `Succeeded`. You can also click on the specific runs to observe the progress of the build pipelines.
 
 ### Exercise the deployed Helidon application:
-1. If a compute instance was configured as the deployment target, i.e. `deployment_target` is set to `INSTANCE` or `ALL`, access the application by using curl to do a GET & PUT http requests.
+1. Go back to an open terminal from the Code Editor or open a new one.
+2. If a compute instance was configured as the deployment target, i.e. `deployment_target` is set to `INSTANCE` or `ALL`, access the application by using curl to do a GET & PUT http requests.
     1. Set the endpoint using the instance's public ip:
        ```shell
        export ENDPOINT_IP=$(~/oci-devops-helidon-example/main/get.sh public_ip)
        echo "Instance public ip is $ENDPOINT_IP"
        ```
-    2. Hello world request:
+    2. Test Hello world request:
        ```shell
        curl http://$ENDPOINT_IP:8080/greet
        ```
@@ -243,7 +249,7 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
        ```shell
        {"message":"Hello World!","date":[2023,5,10]}
        ```
-    3. Hello to a name, i.e. to `Joe`:
+    3. Test Hello to a name, i.e. to `Joe`:
        ```shell
        curl http://$ENDPOINT_IP:8080/greet/Joe
        ```
@@ -260,13 +266,13 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
        ```shell
        {"message":"Hola World!","date":[2023,5,10]}
        ```
-2. If OKE was configured as the deployment target, i.e. `deployment_target` is set to `OKE` or `ALL`, access the application by using curl to do GET & PUT rest requests.
+3. If OKE was configured as the deployment target, i.e. `deployment_target` is set to `OKE` or `ALL`, access the application by using curl to do GET & PUT rest requests.
     1. Set the endpoint using the LoadBalancer's external IP:
        ```shell
        export ENDPOINT_IP=$(kubectl --kubeconfig=$HOME/oci-devops-helidon-example/main/generated/kubeconfig get services oci-mp-server -o jsonpath='{.status.loadBalancer.ingress[].ip}')
        echo "Kubernetes LoadBalancer ip is $ENDPOINT_IP"
        ```
-    2. Hello world request:
+    2. Test hello world request:
        ```shell
        curl http://$ENDPOINT_IP:8080/greet
        ```
@@ -274,7 +280,7 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
        ```shell
        {"message":"Hello World!","date":[2023,5,10]}
        ```
-    3. Hello to a name, i.e. to `Joe`:
+    3. Test Hello to a name, i.e. to `Joe`:
        ```shell
        curl http://$ENDPOINT_IP:8080/greet/Joe
        ```
@@ -291,21 +297,22 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
        ```shell
        {"message":"Hola World!","date":[2023,5,10]}
        ```
-3. Validate that the Helidon Metrics are pushed to the OCI Monitoring Service using the OCI metric integration that was added in the Helidon application:
-   1. From the OCI Console, go to `Observability & Management` -> Metrics Explorer (under Monitoring).
-   2. On Query 1, below the blank graph, choose the compartment with a value that has the format of  `devops-compartment-helidon-demo-<4 char random value>`.
-   3. Select `helidon_metrics` under Metric Namespace.
-   4. Select `requests.count_counter` under Metric Name
+4. Validate that the Helidon Metrics are pushed to the OCI Monitoring Service using the OCI metric integration that was added in the Helidon application:
+   1. From the OCI Console, go to `Observability & Management` -> `Metrics Explorer (under Monitoring)`.
+   2. On `Query 1`, choose the `Compartment` value with the format of `devops-compartment-helidon-demo-<4 char random value>`.
+   3. Select `helidon_metrics` under `Metric namespace`.
+   4. Select `requests.count_counter` under `Metric Name`.
    5. Above the empty graph, you can choose values for `Start time/End Time` or choose the time duration under `Quick Selects`.
-   6. Click `Update Chart` at the bottom of `Query 1` to show all the metric data for the `request count`.
+   6. Click `Update Chart` at the bottom of `Query 1` to show all the metric data for the `request count`. You can also toggle to enable `Show Data Table` on the right upper portion of the graph to show the list of data for the chosen metric.
    7. You can also explore other Metrics by going back to step 4 and choosing a new value. 
-4. Validate OCI Logging SDK integration that was added in the Helidon application. This will push log messages to the OCI Logging Service:
+5. Validate OCI Logging SDK integration that was added in the Helidon application. This will push log messages to the OCI Logging Service:
    1. From the OCI Console, go to `Observability & Management` -> `Logs (under Logging)`.
-   2. Change Compartment with a value that has the format of `devops-compartment-helidon-demo-<4 char random value>`.
-   3. Choose and click on `app-log-helidon-demo` from the Logs Table.
-   4. Choose `Filter by time` value within the scope of your last request. For example, you can choose `Today` to see all request that was made today.
-   5. The `Explore Log` display should output some graphs of the logging activity and will also show a table of the logs that has been captured.
-5. The Helidon oci-mp application adds Health Check feature to validate `liveness` and/or `readiness`. You can check `GreetLivenessCheck` and `GreetReadinessCheck` class files respectively in the project to see how they are done. This will particularly be useful when running the app as a microservice on an orchestrator environment like Kubernetes to determine if the microservice needs to be restarted if it is not healthy. Specific to this lab, the `readiness` check is leveraged in the `DevOps deployment pipeline spec` after the app is started to determine if the Helidon application started successfully. Check out code at [line #79 in deployment_spec.yaml](pipeline_specs/deployment_instance.yaml) to see it in action.
+   2. Change `Compartment` with a value that has the format of `devops-compartment-helidon-demo-<4 char random value>`.
+   3. Under `Filters`, change `Log Group` to `app-log-group-helidon-demo`.
+   4. Choose and click on `app-log-helidon-demo` from the Logs table.
+   5. Choose `Filter by time` value within the scope of your last request. For example, you can choose `Today` to see all request that was made today.
+   6. The `Explore Log` display should output some graphs of the logging activity and below it will also show a list of the logs that has been captured.
+6. The Helidon oci-mp application adds Health Check feature to validate `liveness` and/or `readiness`. You can check `GreetLivenessCheck` and `GreetReadinessCheck` class files respectively in the project to see how they are done. This will particularly be useful when running the app as a microservice on an orchestrator environment like Kubernetes to determine if the microservice needs to be restarted if it is not healthy. Specific to this lab, the `readiness` check is leveraged in the `DevOps deployment pipeline spec` after the app is started to determine if the Helidon application started successfully. Check out code in [deployment_spec.yaml](pipeline_specs/deployment_instance.yaml) to see it in action, particulary in the line that calls a rest request that has a path of `/health/ready`.
    1. If a compute instance was configured as the deployment target, i.e. `deployment_target` is set to `INSTANCE` or `ALL`:
       1. Set the endpoint using the instance's public ip:
          ```shell
@@ -473,7 +480,7 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
       ```shell
       {"message":"Hello World!","date":[2023,5,10]}
       ```
-   3. Check that the bucket now contains an object `hello.txt` and has a size of 5 bytes because the greeting word is `Hello`. You can also download the object and verify that the content is indeed `Hello`.
+   3. From the OCI Console, go to `Storage` -> `Buckets (under Object Storage & Archive Storage)`, set the Compartment value to `devops-compartment-helidon-demo-<4 char random value>` followed by clicking on the bucket that appears, i.e. `app-bucket-helidon-demo-<4 char random value>`. Check that the bucket now contains an object `hello.txt` and has a size of 5 bytes because the greeting word is `Hello`. You can also download the object and verify that the content is indeed `Hello`.
    4. Replace `Hello` greeting word with `Hola`:
       ```shell
       curl -X PUT -H "Content-Type: application/json" -d '{"greeting" : "Hola"}' http://$ENDPOINT_IP:8080/greet/greeting 
@@ -488,10 +495,18 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
       ```shell
       ~/oci-devops-helidon-example/utils/restart.sh 
       ```
-      which will show an output like below if restart succeeds:
+      Respond `yes` when asked `if you want to continue...`, which will then show an output like below:
       ```shell
       Created private.key and can be used to ssh to the deployment instance by running this command: "ssh -i private.key opc@xxx.xxx.xx.xxxx"
       FIPS mode initialized
+      FIPS mode initialized
+      The authenticity of host 'x.x.x.x (x.x.x.x)' can't be established.
+      ECDSA key fingerprint is SHA256:sha256dataxxxxxxxxxxx.
+      ECDSA key fingerprint is SHA1:sha1dataxxxxxxxxxxx.
+      Are you sure you want to continue connecting (yes/no)? yes
+      Warning: Permanently added 'x.x.x.x' (ECDSA) to the list of known hosts.
+      Stopping oci-mp-server.jar with pid 13032
+      Starting oci-mp-server.jar from helidon-app.service
       Stopping oci-mp-server.jar with pid 999990
       Starting oci-mp-server.jar
       Helidon app is now running with pid 999991!
@@ -523,7 +538,7 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
        ```shell
        {"message":"Hello World!","date":[2023,5,10]}
        ```
-    3. Check that the bucket contains an object `hello.txt` and has a size of 4 bytes if the greeting word is `Hola` and 5 bytes if it is `Hello`. You can also download the object and verify that the content is correct.
+    3. From the OCI Console, go to `Storage` -> `Buckets (under Object Storage & Archive Storage)`, set the Compartment value to `devops-compartment-helidon-demo-<4 char random value>` followed by clicking on the bucket that appears, i.e. `app-bucket-helidon-demo-<4 char random value>`. Check that the bucket contains an object `hello.txt` and has a size of 4 bytes if the greeting word is `Hola` and 5 bytes if it is `Hello`. You can also download the object and verify that the content is correct.
     4. Replace greeting word with `Bonjour`:
        ```shell
        curl -X PUT -H "Content-Type: application/json" -d '{"greeting" : "Bonjour"}' http://$ENDPOINT_IP:8080/greet/greeting 
