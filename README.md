@@ -108,7 +108,7 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
         3. `OCI Virtual Cloud Network (VCN)` with `Subnets` and `Security Lists` for the Kubernetes API endpoint, Worker Node, and LoadBalancer.
 5. Diagram below depicts how the DevOps setup will work: 
 
-   ![](./images/devops-diagram.png)
+   ![](./images/devops-diagram-oke-instance.png)
     
 ### Prepare the Helidon Application:
 1. Generate an auth token that will be used to access the DevOps code repository. From the OCI Console's home screen, open the Profile menu and click `My Profile`. Under `Resources`, click on `Auth tokens`, followed by clicking `Generate token` and fill in the `Description`. A new window will open with a notice to `Copy the generated token as it will not be shown again`. Do so and ensure to keep it in a safe place for future usage.
