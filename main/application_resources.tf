@@ -13,7 +13,7 @@ resource "oci_logging_log" "application_log" {
   log_type     = "CUSTOM"
 }
 
-# Create Artifact Repository where the built application and deployment manifest will be uploaded
+# Create Object Storage that will be used by the application
 resource "oci_objectstorage_bucket" "application_bucket" {
   compartment_id = var.compartment_ocid
   name           = "app-bucket${local.resource_name_random_suffix}"
