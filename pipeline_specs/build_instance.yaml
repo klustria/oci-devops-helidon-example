@@ -1,4 +1,4 @@
-## Copyright (c) 2023, Oracle and/or its affiliates.
+## Copyright (c) 2023, 2024 Oracle and/or its affiliates.
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
 # This build spec is custom tailored for the Helidon version 4 MP OCI template generated via the Helidon Archetype
@@ -12,14 +12,13 @@ env:
   variables:
     HELIDON_PROJECT_NAME: "oci-mp"
     HELIDON_ARTIFACT_FILE_NAME: "helidon-oci-mp.tgz"
-    JDK20_TAR_GZ_INSTALLER: "https://download.java.net/java/GA/jdk20.0.1/b4887098932d415489976708ad6d1a4b/9/GPL/openjdk-20.0.1_linux-x64_bin.tar.gz"
-    # JDK20_TAR_GZ_INSTALLER: "https://download.oracle.com/java/20/latest/jdk-20_linux-x64_bin.tar.gz"
+    JDK_TAR_GZ_INSTALLER: "https://download.oracle.com/java/21/latest/jdk-21_linux-x64_bin.tar.gz"
   vaultVariables:
   exportedVariables:
     - BUILDRUN_HASH
     - ARTIFACT_NAME
     - HELIDON_APP_NAME
-    - JDK20_TAR_GZ_INSTALLER
+    - JDK_TAR_GZ_INSTALLER
 steps:
   - type: Command
     name: "Exported variables"
@@ -30,14 +29,14 @@ steps:
       echo "BUILDRUN_HASH: " $BUILDRUN_HASH
       export ARTIFACT_NAME=${HELIDON_ARTIFACT_FILE_NAME}
       export HELIDON_APP_NAME="${HELIDON_PROJECT_NAME}-server.jar"
-      export JDK20_TAR_GZ_INSTALLER=${JDK20_TAR_GZ_INSTALLER}
+      export JDK_TAR_GZ_INSTALLER=${JDK_TAR_GZ_INSTALLER}
   - type: Command
-    name: "Install JDK20"
+    name: "Install JDK"
     command: |
       # wget https://download.oracle.com/java/20/latest/jdk-20_linux-x64_bin.rpm
       # rpm -ivh jdk-20_linux-x64_bin.rpm
-      wget -q ${JDK20_TAR_GZ_INSTALLER} && echo "JDK20 downloaded successfully"
-      tar xzf $(basename ${JDK20_TAR_GZ_INSTALLER}) && echo "JDK20 installed successfully"
+      wget -q ${JDK_TAR_GZ_INSTALLER} && echo "JDK downloaded successfully"
+      tar xzf $(basename ${JDK_TAR_GZ_INSTALLER}) && echo "JDK installed successfully"
   - type: Command
     name: "Install Maven"
     command: |

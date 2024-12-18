@@ -1,4 +1,4 @@
-## Copyright (c) 2023, Oracle and/or its affiliates.
+## Copyright (c) 2023, 2024 Oracle and/or its affiliates.
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
 # This deployment spec is custom tailored fit for the Helidon version 4 MP OCI template generated via the Helidon Archetype
@@ -24,13 +24,13 @@ steps:
     command: |
       # Go to home directory (/var/lib/ocarun)
       cd ~
-      JDK20_TAR_GZ_INSTALLER_BASE=$(basename ${JDK20_TAR_GZ_INSTALLER})
+      JDK_TAR_GZ_INSTALLER_BASE=$(basename ${JDK_TAR_GZ_INSTALLER})
       # If jdk installer does not exist yet, download and install it
-      ls ${JDK20_TAR_GZ_INSTALLER_BASE}
+      ls ${JDK_TAR_GZ_INSTALLER_BASE}
       if [ $? -ne 0 ]; then 
         rm -f *jdk*.tar.gz
-        wget -q ${JDK20_TAR_GZ_INSTALLER} && echo "JDK20 downloaded successfully"
-        tar xzf ${JDK20_TAR_GZ_INSTALLER_BASE} && echo "JDK20 installed successfully"
+        wget -q ${JDK_TAR_GZ_INSTALLER} && echo "JDK downloaded successfully"
+        tar xzf ${JDK_TAR_GZ_INSTALLER_BASE} && echo "JDK installed successfully"
       fi
     timeoutInSeconds: 5000
   - stepType: Command

@@ -37,9 +37,9 @@ This example will demonstrate how to pair Helidon with OCI DevOps pipeline to bu
 The goal of this task is to prepare the environment for the DevOps setup by creating a Compartment, Dynamic Groups, User Group and Polices. This section requires a user with administrator privilege. If you don't have it, make sure to request another user with such privilege to run this for you.
 1. Open the newly cloned repository directory `oci-devops-helidon-example` from the code editor.
 2. From the root directory of the repository, open `terraform.tfvars` and set the values of the following variables: 
-   * `tenancy_ocid` - This can be retrieved by opening the `Profile` menu and click `Tenancy: <your_tenancy_name>`. The tenancy OCID is shown under `Tenancy Information`. Click `Show` to display the entire ID or click `Copy` to copy it to your clipboard.
+   * `tenancy_ocid` - This can be retrieved by opening the `Profile` menu (click the User icon on the top most right corner of the console window) and click `Tenancy: <your_tenancy_name>`. The tenancy OCID is shown under `Tenancy Information`. Click `Show` to display the entire ID or click `Copy` to copy it to your clipboard.
    * `region` - From OCI Console's home screen, open the `Region` menu, and then click `Manage Regions`. Locate the Home Region and copy the Region identifier.
-   * `user_ocid` - This can be retrieved by opening the `Profile` menu and clicking on `My Profile`. Under `User information`, click `Show` to display the entire ID or click `Copy` to copy it to your clipboard.
+   * `user_ocid` - This can be retrieved by opening the `Profile` menu and clicking on on your user id. Under `User information`, click `Show` to display the entire ID or click `Copy` to copy it to your clipboard.
 
    **Note:** Ensure that `region` reflects your home region as this exercise will not work in other regions. If DevOps resources provisioning, that will be performed in the next section, will be done on the same home region, then use the `region` parameter for this purpose. However, if the intention is to target DevOps provisioning on a different non-home region, then for this step, set the value of the `home_region` parameter instead.
 3. Go to the `init` directory.
@@ -111,7 +111,7 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
    ![](./images/devops-diagram-oke-instance.png)
     
 ### Prepare the Helidon Application:
-1. Generate an auth token that will be used to access the DevOps code repository. From the OCI Console's home screen, open the Profile menu and click `My Profile`. Under `Resources`, click on `Auth tokens`, followed by clicking `Generate token` and fill in the `Description`. A new window will open with a notice to `Copy the generated token as it will not be shown again`. Do so and ensure to keep it in a safe place for future usage.
+1. Generate an auth token that will be used to access the DevOps code repository. From the OCI Console's home screen, open the Profile menu and click on your user name. Under `Resources`, click on `Auth tokens`, followed by clicking `Generate token` and fill in the `Description`. A new window will open with a notice to `Copy this token for your records. It will not be shown again`. Do so and ensure to keep it in a safe place for future usage.
 2. Go to the home directory
    ```shell
    cd ~
@@ -125,18 +125,22 @@ The goal of this task is to prepare the environment for the DevOps setup by crea
    ```shell
    ./helidon init
    ```
-5. When it prompts for `Helidon version`, enter `4.0.0-ALPHA6`
+5. When it prompts for `Helidon version`, choose the default
    ```shell
-   Helidon version (default: 3.2.2): 4.0.0-ALPHA6
+   Helidon versions
+     (1) 4.1.5
+     (2) 3.2.11
+     (3) 2.6.10
+     (4) Show all versions
+   Enter selection (default: 1):
    ```
 6. When prompted to `Select a Flavor`, choose `Helidon MP`
    ```shell
    | Helidon Flavor
- 
+   
    Select a Flavor
-   (1) se   | Helidon SE
-   (2) mp   | Helidon MP
-   (3) nima | Helidon Níma
+     (1) se | Helidon SE
+     (2) mp | Helidon MP
    Enter selection (default: 1): 2
    ```
 7. When prompted to `Select an Application Type`, choose `OCI`  
@@ -372,7 +376,9 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
    1. Replace the existing GreetingProvider constructor method with the code that will have the following characteristics:
       1. From the constructor's argument section, add `ObjectStorage objectStorageClient` parameter. Since this is part of @Injected annotation, the parameter will automatically be processed and set by Helidon to contain the client which can be used to communicate with the Object Storage service without having to add several lines of OCI SDK code for that purpose. 
       2. From the same constructor's argument section, add ConfigProperty which will extract value from an `oci.bucket.name` property in the configuration. This has earlier been populated in `microprofile-config.properties` during the initial application setup when a utility script called `update_config_values.sh` was executed from the `oci-devops-helidon-example`  repository directory.
-      3. Using getNamespace() Object Storage SDK method, \retrieve the Object Storage's namespace as it will be used later to retrieve or store an object:
+      3. Using getNamespace() Object Storage SDK method, retrieve the Object Storage's namespace as it will be used to retrieve or store an object.
+      4. Call `getMessage()` to retrieve the content of the object. If it is empty, execute `setMessage()` to set the object's content with the default message value from the `app.greeting` configuration parameter.
+      5. The `GreetingProvider` constructor method code will look like this:
          ```java
          public GreetingProvider(@ConfigProperty(name = "app.greeting") String message,
                                  ObjectStorage objectStorageClient,
@@ -384,7 +390,10 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
                  this.objectStorageClient = objectStorageClient;
                  this.namespaceName = namespaceResponse.getValue();
                  LOGGER.info("Object storage namespace: " + namespaceName);
-                 setMessage(message);
+
+                 if (getMessage() == null) {
+                     setMessage(message);
+                 }
              } catch (Exception e) {
                  LOGGER.warning("Error invoking getNamespace from Object Storage: " + e);
              }
@@ -420,7 +429,8 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
       }
       ```
       This will use `getObject()` SDK method to retrieve the greeting word from the `hello.txt` object fetched from the bucket.
-   4. Replace the content of `void setMessage(String message)` method with:
+   4. 
+   5. Replace the content of `void setMessage(String message)` method with:
       ```java
       try {
           byte[] contents = message.getBytes();
@@ -438,7 +448,7 @@ The objective of this exercise is to demonstrate how to add Object Storage acces
       }
       ```
       This will use `putObject()` SDK method to store the `hello.txt` object containing the greeting word into the bucket.
-   5. Remove the import: 
+   6. Remove the import: 
       ```java
       import java.util.concurrent.atomic.AtomicReference;
       ```
@@ -576,7 +586,7 @@ When the environment is no longer needed, all the OCI resources can be cleaned u
       ```
    2. Run the destroy script. This will remove all artifacts stored in the artifact repository, remove kubernetes service (which will also remove the provisioned LoadBalancer) and deployment from OKE, if they exist, and finally will destroy all the OCI resources created by the terraform script.    
       ```
-      destroy.sh
+      ./destroy.sh
       ```
 3. Cleaning up the created compartment, dynamic-groups, groups and policies. 
    1. From the same terminal, change directory to init.
