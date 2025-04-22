@@ -11,18 +11,3 @@ output "generated_ssh_private_key" {
 output "deployment_instance_public_ip" {
   value = module.instance-deployment[0].deployment_instance_public_ip
 }
-
-# Output code repository https url
-output "application_code_repository_https_url" {
-  value = oci_devops_repository.devops_repo.http_url
-}
-
-# Output object storage application bucket
-output "application_bucket_name" {
-  value = oci_objectstorage_bucket.application_bucket.name
-}
-
-# Output object storage application bucket
-output "application_log_id" {
-  value = oci_logging_log.application_log.id
-}
