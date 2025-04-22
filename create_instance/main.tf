@@ -11,6 +11,7 @@ module "instance" {
   source                              = "./instance"
   availablity_domain_name             = var.availablity_domain_name
   ssh_public_key                      = var.ssh_public_key
+  tenancy_ocid                        = var.tenancy_ocid
   compartment_ocid                    = module.tenancy.compartment_id
   resource_name_suffix                = local.resource_name_suffix
   instance_shape                      = var.instance_shape

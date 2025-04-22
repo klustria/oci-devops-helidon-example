@@ -11,8 +11,7 @@ data "oci_core_images" "compute_instance_images" {
   compartment_id           = var.compartment_ocid
   operating_system         = var.instance_os
   operating_system_version = var.instance_os_version
-
-  shape      = var.instance_shape
-  sort_by    = "TIMECREATED"
-  sort_order = "DESC"
+  shape                    = var.instance_shape
+  sort_by                  = "TIMECREATED"
+  sort_order               = "DESC"
 }
