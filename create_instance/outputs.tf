@@ -18,5 +18,5 @@ output "generated_ssh_private_key" {
 
 # Output compute instance public ip
 output "deployment_instance_public_ip" {
-  value = module.instance-deployment.deployment_instance_public_ip
+  value = module.instance.deployment_instance_public_ip
 }
