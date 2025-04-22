@@ -2,7 +2,7 @@
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
 # Tenancy
-tenancy_ocid = "ocid1.tenancy.oc1.."
+tenancy_ocid = "ocid1.tenancy.oc1..aaaaaaaaojcizdygp3su6uricqytroqr2ufcprejd7o4earwmbz3akr5ka4q"
 
 # Region - Set home_region variable only if it is different from region. Only used when running scripts under init.
 #          If home_region is not set, region variable will also be considered as the home_region in init.
