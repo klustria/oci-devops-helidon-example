@@ -29,24 +29,3 @@ variable "fingerprint" {
   default = ""
 }
 
-variable "project_logging_config_retention_period_in_days" {
-  default = 30
-}
-
-variable "project_description" {
-  default = "DevOps Project for Instance Group deployment of a Helidon Application"
-}
-
-variable "use_oke_cluster" {
-  default     = true
-  description = "Creates a new OKE cluster, node pool and network resources"
-}
-
-variable "deployment_target" {
-  type    = string
-  default = "ALL"
-  validation {
-    condition     = contains(["OKE", "INSTANCE", "ALL"], upper(var.deployment_target))
-    error_message = "Must be either \"OKE\", \"INSTANCE\" or \"ALL\"."
-  }
-}

@@ -2,7 +2,6 @@
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
 module "instance-deployment" {
-  count                   = length(regexall("(?i)^(INSTANCE|ALL)$", var.deployment_target)) > 0 ? 1 : 0
   source                  = "./instance"
   availablity_domain_name = var.availablity_domain_name == "" ? data.oci_identity_availability_domains.ads.availability_domains[0]["name"] : var.availablity_domain_name
   ssh_public_key          = var.ssh_public_key == "" ? tls_private_key.public_private_key_pair.public_key_openssh : var.ssh_public_key

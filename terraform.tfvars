@@ -11,7 +11,7 @@ region = "us-ashburn-1"
 
 # Compartment - Will only be used in scripts under main. Fill this up with the compartment id created in init or
 #               an already existing compartment that you wish to use for this demo.
-compartment_ocid = "ocid1.compartment.oc1.."
+compartment_ocid = "ocid1.compartment.oc1..aaaaaaaasuxzx6e7snstbhkodvddwgske2vqmmudp3ipbxsfjn2vi7ddwgbq"
 
 # Set values for below variables only under the following conditions:
 # 1. If using user principal authentication. Set the proper user credentials and uncomment corresponding provider
@@ -19,13 +19,8 @@ compartment_ocid = "ocid1.compartment.oc1.."
 # 2. If user needs additional policy to access the created compartment and cloud shell, which in this scenario, needs
 #    only "user_ocid" to be set up.
 #
-user_ocid        = "ocid1.user.oc1.."
+# user_ocid        = "ocid1.user.oc1.."
 # fingerprint      = "1c.."
 # private_key_path = "~/.oci/oci_api_key.pem"
 
-# Deployment target destination. Allowed values are the following (not case sensitive):
-# 1. INSTANCE - Deploys to a provisioned instance
-# 2. OKE      - Deploys to a provisioned OKE Cluster
-# 3. ALL      - Deploys to both OKE and INSTANCE.
-# Default is ALL
-deployment_target = "ALL"
+
