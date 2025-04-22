@@ -4,10 +4,15 @@
 # Tenancy
 tenancy_ocid = "ocid1.tenancy.oc1..aaaaaaaaojcizdygp3su6uricqytroqr2ufcprejd7o4earwmbz3akr5ka4q"
 
-# Region - Set home_region variable only if it is different from region. Only used when running scripts under init.
-#          If home_region is not set, region variable will also be considered as the home_region in init.
-# home_region = ""
+# Region - should be the home region
 region = "us-ashburn-1"
+
+# Instance details
+instance_shape                      = "VM.Standard.A2.Flex"
+instance_ocpus                      = 1
+instance_shape_config_memory_in_gbs = 6
+instance_os                         = "Oracle Linux"
+instance_os_version                 = "8"
 
 # Set values for below variables only under the following conditions:
 # 1. If using user principal authentication. Set the proper user credentials and uncomment corresponding provider
@@ -18,5 +23,7 @@ region = "us-ashburn-1"
 # user_ocid        = "ocid1.user.oc1.."
 # fingerprint      = "1c.."
 # private_key_path = "~/.oci/oci_api_key.pem"
+
+
 
 

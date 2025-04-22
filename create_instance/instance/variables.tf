@@ -5,6 +5,10 @@ variable "resource_name_suffix" {
   default = ""
 }
 
+variable "tenancy_ocid" {
+  default = ""
+}
+
 variable "compartment_ocid" {
   default = ""
 }
@@ -44,7 +48,7 @@ variable "instance_os" {
   default     = "Oracle Linux"
 }
 
-variable "linux_os_version" {
+variable "instance_os_version" {
   description = "Operating system version for all Linux instances"
   default     = "8"
 }

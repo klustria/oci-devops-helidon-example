@@ -3,7 +3,7 @@
 
 # Create group, user and policies
 resource "oci_identity_dynamic_group" "instance_dynamic_group" {
-  name           = "instance-dynamic-group${local.resource_name_random_suffix}"
+  name           = "instance-dynamic-group${var.resource_name_suffix}"
   description    = "Compute instance dynamic group"
   compartment_id = var.tenancy_ocid
   matching_rule  = "ALL {instance.compartment.id = '${oci_identity_compartment.compartment.id}'}"

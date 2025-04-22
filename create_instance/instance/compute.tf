@@ -3,7 +3,7 @@
 
 # Provisions a compute instance that will be used as the deployment target
 resource "oci_core_instance" "compute_instance" {
-  availability_domain = var.availablity_domain_name
+  availability_domain = var.availablity_domain_name == "" ? data.oci_identity_availability_domains.ads.availability_domains[0]["name"] : var.availablity_domain_name
   compartment_id      = var.compartment_ocid
   display_name        = "instance${var.resource_name_suffix}"
   shape               = var.instance_shape
@@ -15,7 +15,7 @@ resource "oci_core_instance" "compute_instance" {
   }
 
   metadata = {
-    ssh_authorized_keys = var.ssh_public_key
+    ssh_authorized_keys = var.ssh_public_key == "" ? tls_private_key.public_private_key_pair.public_key_openssh : var.ssh_public_key
     user_data           = base64encode(file("./instance/cloud_init"))
   }
 

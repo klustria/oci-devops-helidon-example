@@ -6,3 +6,9 @@ output "deployment_instance_public_ip" {
   value = oci_core_instance.compute_instance.public_ip
 }
 
+# Output ssh private key
+output "deployment_instance_ssh_private_key" {
+  value = tls_private_key.public_private_key_pair.private_key_pem
+}
+
+

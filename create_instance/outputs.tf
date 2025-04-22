@@ -3,9 +3,20 @@
 
 # Output created compartment id
 output "compartment_id" {
-  value = oci_identity_compartment.compartment.id
+  value = module.tenancy.compartment_id
 }
 
 output "compartment_name" {
-  value = oci_identity_compartment.compartment.name
+  value = module.tenancy.compartment_name
+}
+
+# Output private key used for ssh connection to the provisioned instance
+output "generated_ssh_private_key" {
+  value     = tls_private_key.public_private_key_pair.private_key_pem
+  sensitive = true
+}
+
+# Output compute instance public ip
+output "deployment_instance_public_ip" {
+  value = module.instance-deployment.deployment_instance_public_ip
 }
