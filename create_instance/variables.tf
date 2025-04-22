@@ -2,18 +2,23 @@
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
 variable "tenancy_ocid" {}
+
 variable "compartment_ocid" {
   default = ""
 }
+
 variable "ssh_public_key" {
   default = ""
 }
+
 variable "availablity_domain_name" {
   default = ""
 }
+
 variable "home_region" {
   default = ""
 }
+
 variable "region" {
   default = ""
 }

@@ -8,9 +8,8 @@ module "tenancy" {
 }
 
 module "instance" {
-  source                  = "./instance"
-  availablity_domain_name = var.availablity_domain_name == "" ?
-    data.oci_identity_availability_domains.ads.availability_domains[0]["name"] : var.availablity_domain_name
+  source                              = "./instance"
+  availablity_domain_name             = var.availablity_domain_name
   ssh_public_key                      = var.ssh_public_key
   compartment_ocid                    = module.tenancy.compartment_id
   resource_name_suffix                = local.resource_name_suffix
