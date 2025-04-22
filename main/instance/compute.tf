@@ -1,7 +1,7 @@
 ## Copyright (c) 2023, Oracle and/or its affiliates.
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
-# Provisions a compute instance that will be used as the deployment target for OCI DevOps service
+# Provisions a compute instance that will be used as the deployment target
 resource "oci_core_instance" "compute_instance" {
   availability_domain = var.availablity_domain_name
   compartment_id      = var.compartment_ocid

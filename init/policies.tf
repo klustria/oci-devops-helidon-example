@@ -8,23 +8,11 @@ resource "oci_identity_policy" "instance_policy" {
   compartment_id = var.tenancy_ocid
 
   statements = [
-    "Allow dynamic-group ${oci_identity_dynamic_group.instance_dynamic_group.name} to use instance-agent-command-execution-family in compartment ${oci_identity_compartment.devops_demo_compartment.name}",
-    "Allow dynamic-group ${oci_identity_dynamic_group.instance_dynamic_group.name} to read generic-artifacts in compartment ${oci_identity_compartment.devops_demo_compartment.name}",
-    "Allow dynamic-group ${oci_identity_dynamic_group.instance_dynamic_group.name} to use log-content in compartment ${oci_identity_compartment.devops_demo_compartment.name}",
-    "Allow dynamic-group ${oci_identity_dynamic_group.instance_dynamic_group.name} to use metrics in compartment ${oci_identity_compartment.devops_demo_compartment.name}",
-    "Allow dynamic-group ${oci_identity_dynamic_group.instance_dynamic_group.name} to manage objects in compartment ${oci_identity_compartment.devops_demo_compartment.name}",
-    "Allow dynamic-group ${oci_identity_dynamic_group.instance_dynamic_group.name} to use buckets in compartment ${oci_identity_compartment.devops_demo_compartment.name}"
+    "Allow dynamic-group ${oci_identity_dynamic_group.instance_dynamic_group.name} to use instance-agent-command-execution-family in compartment ${oci_identity_compartment.compartment.name}",
+    "Allow dynamic-group ${oci_identity_dynamic_group.instance_dynamic_group.name} to read generic-artifacts in compartment ${oci_identity_compartment.compartment.name}",
+    "Allow dynamic-group ${oci_identity_dynamic_group.instance_dynamic_group.name} to use log-content in compartment ${oci_identity_compartment.compartment.name}",
+    "Allow dynamic-group ${oci_identity_dynamic_group.instance_dynamic_group.name} to use metrics in compartment ${oci_identity_compartment.compartment.name}",
+    "Allow dynamic-group ${oci_identity_dynamic_group.instance_dynamic_group.name} to manage objects in compartment ${oci_identity_compartment.compartment.name}",
+    "Allow dynamic-group ${oci_identity_dynamic_group.instance_dynamic_group.name} to use buckets in compartment ${oci_identity_compartment.compartment.name}"
   ]
 }
-
-# # Create policies for user group
-# resource "oci_identity_policy" "user_group_policy" {
-#   name           = "user-policy${local.resource_name_random_suffix}"
-#   description    = "Policy to allow user full access to the created compartment and cloud shell"
-#   compartment_id = var.tenancy_ocid
-#
-#   statements = [
-#     "Allow group ${oci_identity_group.user_group.name} to manage all-resources in compartment ${oci_identity_compartment.devops_demo_compartment.name}",
-#     "Allow group ${oci_identity_group.user_group.name} to use cloud-shell in tenancy"
-#   ]
-# }

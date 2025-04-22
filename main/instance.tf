@@ -7,9 +7,4 @@ module "instance-deployment" {
   ssh_public_key          = var.ssh_public_key == "" ? tls_private_key.public_private_key_pair.public_key_openssh : var.ssh_public_key
   compartment_ocid        = var.compartment_ocid
   resource_name_suffix    = local.resource_name_suffix
-  artifact_repository_id  = oci_artifacts_repository.artifact_repo.id
-  devops_project_id       = oci_devops_project.devops_project.id
-  devops_repo_name        = oci_devops_repository.devops_repo.name
-  devops_repo_id          = oci_devops_repository.devops_repo.id
-  devops_repo_http_url    = oci_devops_repository.devops_repo.http_url
 }
