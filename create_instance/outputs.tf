@@ -12,7 +12,7 @@ output "compartment_name" {
 
 # Output private key used for ssh connection to the provisioned instance
 output "generated_ssh_private_key" {
-  value     = tls_private_key.public_private_key_pair.private_key_pem
+  value     = module.instance.deployment_instance_ssh_private_key
   sensitive = true
 }
 
