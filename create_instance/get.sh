@@ -46,7 +46,7 @@ get_public_ip() {
 create_ssh_private_key() {
   rm -rf private.key
   # local private_key=$(jq -r '.outputs.generated_ssh_private_key.value' ${TERRAFORM_TFSTATE})
-  local private_key=get_resource_value deployment_instance_ssh_private_key
+  local private_key=$(get_resource_value deployment_instance_ssh_private_key)
   if [[ -n "${private_key}" && "${private_key}" != "null" ]]; then
     echo -n "${private_key}" > private.key
     chmod go-rw private.key
