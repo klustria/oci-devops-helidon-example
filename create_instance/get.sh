@@ -33,8 +33,7 @@ get_public_ip() {
 # Extract ssh private key value from output, save in private.key and change file mode to read-only
 create_ssh_private_key() {
   rm -rf private.key
-  # local private_key=$(jq -r '.outputs.instance_ssh_private_key.value' ${TERRAFORM_TFSTATE})
-  local private_key=$(get_resource_value instance_ssh_private_key)
+  local private_key=$(jq -r '.outputs.instance_ssh_private_key.value' ${TERRAFORM_TFSTATE})
   if [[ -n "${private_key}" && "${private_key}" != "null" ]]; then
     echo -n "${private_key}" > private.key
     chmod go-rw private.key
