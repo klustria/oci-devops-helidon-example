@@ -17,7 +17,7 @@
 
 SCRIPT_DIR=$(dirname $0)
 HELIDON_OCI_MP_APP_ZIP=oci-mp-server.zip
-source ${SCRIPT_DIR}/get_common.sh
+source "${SCRIPT_DIR}"/get_common.sh
 
 
 # Display usage information for this tool.
@@ -36,16 +36,17 @@ if [ ! -d "${1}" ]; then
     echo "Error: \"${1}\" is not a valid directory"
     exit 1
 fi
+CURRENT_DIR=$(pwd)
 SERVER_BIN_DIR="${1}/server/target"
 cd "${SERVER_BIN_DIR}" || exit 1
 
 # Assemble the application binary
-zip -r "${SCRIPT_DIR}/${HELIDON_OCI_MP_APP_ZIP}" libs oci-mp-server.jar
-cd "${SCRIPT_DIR}" || exit 1
+zip -r "${CURRENT_DIR}/${HELIDON_OCI_MP_APP_ZIP}" libs oci-mp-server.jar
+cd "${CURRENT_DIR}" || exit 1
 
 # Generate private key file that will be use to ssh or scp to the instance
-./get.sh create_ssh_private_key
-PRIVATE_IP=$(./get.sh public_ip)
+"${SCRIPT_DIR}"/get.sh create_ssh_private_key
+PRIVATE_IP=$("${SCRIPT_DIR}"/get.sh public_ip)
 
 # Upload the file
 scp -i private.key oci-mp-server.zip opc@"${PRIVATE_IP}":/home/opc
