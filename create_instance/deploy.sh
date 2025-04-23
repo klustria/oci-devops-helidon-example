@@ -40,15 +40,24 @@ CURRENT_DIR=$(pwd)
 SERVER_BIN_DIR="${1}/server/target"
 cd "${SERVER_BIN_DIR}" || exit 1
 
-# Assemble the application binary
+# Assemble the application zip
 zip -r "${CURRENT_DIR}/${HELIDON_OCI_MP_APP_ZIP}" libs oci-mp-server.jar
 cd "${CURRENT_DIR}" || exit 1
 
 # Generate private key file that will be use to ssh or scp to the instance
 "${SCRIPT_DIR}"/get.sh create_ssh_private_key
-PRIVATE_IP=$("${SCRIPT_DIR}"/get.sh public_ip)
+# Get instance public IP
+PUBLIC_IP=$("${SCRIPT_DIR}"/get.sh public_ip)
+# Upload the application zip
+scp -o StrictHostKeyChecking=accept-new -i private.key oci-mp-server.zip opc@"${PUBLIC_IP}":/home/opc
+# Download & install jdk and run app
+ssh -i private.key opc@"${PUBLIC_IP}" << 'EOF'
+    unzip oci-mp-server.zip
+    curl -O https://download.oracle.com/java/21/latest/jdk-21_linux-x64_bin.tar.gz
+    tar xvzf jdk-21_linux-x64_bin.tar.gz
+    export PATH=~/jdk-21.0.7/bin:$PATH
+    nohup java -jar target/oci-mp-server.jar &> ci-mp-server.log &
+EOF
 
-# Upload the file
-scp -i private.key oci-mp-server.zip opc@"${PRIVATE_IP}":/home/opc
-
+# delete private.key
 rm private.key
