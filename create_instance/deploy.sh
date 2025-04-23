@@ -36,7 +36,7 @@ if [ ! -d "${1}" ]; then
     echo "Error: \"${1}\" is not a valid directory"
     exit 1
 fi
-SERVER_BIN_DIR="${1}\server\target"
+SERVER_BIN_DIR="${1}/server/target"
 cd "${SERVER_BIN_DIR}" || exit 1
 
 # Assemble the application binary
@@ -49,3 +49,5 @@ PRIVATE_IP=$(./get.sh public_ip)
 
 # Upload the file
 scp -i private.key oci-mp-server.zip opc@"${PRIVATE_IP}":/home/opc
+
+rm private.key
