@@ -59,5 +59,6 @@ ssh -i private.key opc@"${PUBLIC_IP}" << 'EOF'
     nohup java -jar target/oci-mp-server.jar &> ci-mp-server.log &
 EOF
 
-# delete private.key
+# delete private.key and application zip
 rm private.key
+rm "${HELIDON_OCI_MP_APP_ZIP}"
