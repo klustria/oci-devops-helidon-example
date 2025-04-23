@@ -16,8 +16,8 @@ parse_tf_output() {
 
 # Evaluate if parsed resource is empty or not
 evaluate_parsed_resource() {
-  if [[ ! -z "${1}" && "${1}" != "null" ]]; then
-    echo -n ${1}
+  if [[ -n "${1}" && "${1}" != "null" ]]; then
+    echo -n "${1}"
   else
     echo -n "Requested oci resource does not exist"
   fi
@@ -43,5 +43,3 @@ if ! test -f ${TERRAFORM_TFSTATE}; then
   echo "Error: Terraform state (\"${TERRAFORM_TFSTATE}\") does not exist which means the oci resource(s) have not been provisioned yet"
   exit 1
 fi
-
-
