@@ -57,6 +57,25 @@ ssh -i private.key opc@"${PUBLIC_IP}" << 'EOF'
     tar xvzf jdk-21_linux-x64_bin.tar.gz
     export PATH=~/jdk-21.0.7/bin:$PATH
     nohup java -jar oci-mp-server.jar &> oci-mp-server.log &
+
+    # Check if Helidon is ready in 60 seconds using the readiness healthcheck endpoint of the app.
+    TIMEOUT_SEC=60
+    start_time="$(date -u +%s)"
+    while true; do
+    curl -s http://localhost:8080/health/ready | grep -q '"status":"UP"'
+    if [ $? -eq 0 ]; then
+      echo "Helidon app is now running with pid $(ps -fe | grep oci-mp-server | grep -v -e bash -e grep | awk '{print $2}')"
+      break
+    fi
+    current_time="$(date -u +%s)"
+    elapsed_seconds=$(($current_time-$start_time))
+    if [ $elapsed_seconds -gt $TIMEOUT_SEC ]; then
+      echo "Error: Helidon app failed to run successfully. Printing the logs..."
+      cat oci-mp-server.log
+      exit 1
+    fi
+      sleep 1
+    done
 EOF
 
 # delete private.key and application zip
