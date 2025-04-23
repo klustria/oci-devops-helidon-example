@@ -8,9 +8,9 @@ tenancy_ocid = "ocid1.tenancy.oc1..aaaaaaaaojcizdygp3su6uricqytroqr2ufcprejd7o4e
 region = "us-ashburn-1"
 
 # Instance details
-instance_shape                      = "VM.Standard.A2.Flex"
+instance_shape                      = "VM.Standard.E2.1.Micro"
 instance_ocpus                      = 1
-instance_shape_config_memory_in_gbs = 6
+instance_shape_config_memory_in_gbs = 1
 instance_os                         = "Oracle Linux"
 instance_os_version                 = "8"
 
