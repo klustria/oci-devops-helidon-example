@@ -17,7 +17,7 @@
 module "tenancy" {
   source               = "./tenancy"
   tenancy_ocid         = var.tenancy_ocid
-  resource_name_suffix = local.resource_name_suffix
+  resource_name_suffix = local.resource_name_random_suffix
 }
 
 module "instance" {
@@ -26,11 +26,10 @@ module "instance" {
   ssh_public_key                      = var.ssh_public_key
   tenancy_ocid                        = var.tenancy_ocid
   compartment_ocid                    = module.tenancy.compartment_id
-  resource_name_suffix                = local.resource_name_suffix
+  resource_name_suffix                = local.resource_name_random_suffix
   instance_shape                      = var.instance_shape
   instance_ocpus                      = var.instance_ocpus
   instance_shape_config_memory_in_gbs = var.instance_shape_config_memory_in_gbs
   instance_os                         = var.instance_os
   instance_os_version                 = var.instance_os_version
-
 }
