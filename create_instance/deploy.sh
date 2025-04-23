@@ -52,7 +52,7 @@ PUBLIC_IP=$("${SCRIPT_DIR}"/get.sh public_ip)
 scp -o StrictHostKeyChecking=accept-new -i private.key oci-mp-server.zip opc@"${PUBLIC_IP}":/home/opc
 # Download & install jdk and run app
 ssh -i private.key opc@"${PUBLIC_IP}" << 'EOF'
-    unzip oci-mp-server.zip
+    unzip -o oci-mp-server.zip
     curl -O https://download.oracle.com/java/21/latest/jdk-21_linux-x64_bin.tar.gz
     tar xvzf jdk-21_linux-x64_bin.tar.gz
     export PATH=~/jdk-21.0.7/bin:$PATH
