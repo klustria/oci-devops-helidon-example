@@ -38,7 +38,7 @@ get_app_log_id() {
 }
 
 get_public_ip() {
-  get_resource_value deployment_instance_public_ip
+  get_resource_value instance_public_ip
   echo
 }
 
@@ -46,12 +46,12 @@ get_public_ip() {
 create_ssh_private_key() {
   rm -rf private.key
   # local private_key=$(jq -r '.outputs.generated_ssh_private_key.value' ${TERRAFORM_TFSTATE})
-  local private_key=$(get_resource_value deployment_instance_ssh_private_key)
+  local private_key=$(get_resource_value instance_ssh_private_key)
   if [[ -n "${private_key}" && "${private_key}" != "null" ]]; then
     echo -n "${private_key}" > private.key
     chmod go-rw private.key
     echo -n "Created private.key and can be used to ssh to the deployment instance by running this command: \"ssh -i private.key opc@"
-    get_resource_value deployment_instance_public_ip
+    get_resource_value instance_public_ip
     echo "\""
   else
     echo "Private key does not exist"

@@ -6,17 +6,18 @@ output "compartment_id" {
   value = module.tenancy.compartment_id
 }
 
+# Output created compartment name
 output "compartment_name" {
   value = module.tenancy.compartment_name
 }
 
 # Output private key used for ssh connection to the provisioned instance
-output "generated_ssh_private_key" {
-  value     = module.instance.deployment_instance_ssh_private_key
+output "instance_ssh_private_key" {
+  value     = module.instance.instance_ssh_private_key
   sensitive = true
 }
 
 # Output compute instance public ip
-output "deployment_instance_public_ip" {
-  value = module.instance.deployment_instance_public_ip
+output "instance_public_ip" {
+  value = module.instance.instance_public_ip
 }
