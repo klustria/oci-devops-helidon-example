@@ -15,8 +15,10 @@
 # limitations under the License.
 #
 
+JDK_TAR_GZ_INSTALLER="https://download.oracle.com/java/21/latest/jdk-21_linux-x64_bin.tar.gz"
+
 SCRIPT_DIR=$(dirname $0)
-HELIDON_OCI_MP_APP_ZIP=oci-mp-server.zip
+HELIDON_MP_APP_ZIP=oci-mp-server.zip
 source "${SCRIPT_DIR}"/get_common.sh
 
 
@@ -41,7 +43,7 @@ SERVER_BIN_DIR="${1}/server/target"
 cd "${SERVER_BIN_DIR}" || exit 1
 
 # Assemble the application zip
-zip -r "${CURRENT_DIR}/${HELIDON_OCI_MP_APP_ZIP}" libs oci-mp-server.jar
+zip -r "${CURRENT_DIR}/${HELIDON_MP_APP_ZIP}" libs oci-mp-server.jar
 cd "${CURRENT_DIR}" || exit 1
 
 # Generate private key file that will be use to ssh or scp to the instance
@@ -50,13 +52,58 @@ cd "${CURRENT_DIR}" || exit 1
 PUBLIC_IP=$("${SCRIPT_DIR}"/get.sh public_ip)
 # Upload the application zip
 scp -o StrictHostKeyChecking=accept-new -i private.key oci-mp-server.zip opc@"${PUBLIC_IP}":/home/opc
+
 # Download & install jdk and run app
 ssh -i private.key opc@"${PUBLIC_IP}" << 'EOF'
-    unzip -o oci-mp-server.zip
-    curl -O https://download.oracle.com/java/21/latest/jdk-21_linux-x64_bin.tar.gz
-    tar xvzf jdk-21_linux-x64_bin.tar.gz
-    export PATH=~/jdk-21.0.7/bin:$PATH
-    nohup java -jar oci-mp-server.jar &> oci-mp-server.log &
+    ### Unzip the application binary
+    unzip -o "${HELIDON_MP_APP_ZIP}"
+
+    ###  Download and extract JDK
+    if ! ls "${JDK_TAR_GZ_INSTALLER_BASE}" ; then
+        rm -f "*jdk*.tar.gz"
+        # Download JDK
+        curl -O "${JDK_TAR_GZ_INSTALLER}" && echo "JDK downloaded successfully"
+        tar xzf ${JDK_TAR_GZ_INSTALLER_BASE} && echo "JDK installed successfully"
+    fi
+
+    # export PATH=~/jdk-21.0.7/bin:$PATH
+    # nohup java -jar oci-mp-server.jar &> oci-mp-server.log &
+
+    ### Create Service file
+    export JAVA_BIN=$(ls -d "$(pwd)"/jdk*/)bin
+    cat << EOF > helidon-app.service.new
+    [Unit]
+    Description=Helidon OCI-MP application service
+    After=syslog.target network.target
+
+    [Service]
+    User=ocarun
+    Type=simple
+    WorkingDirectory=/var/lib/ocarun
+    ExecStart=/bin/bash -c '${JAVA_BIN}/java -jar ${HELIDON_APP_NAME} &> helidon-app.log'
+
+    [Install]
+    WantedBy=multi-user.target
+    EOF
+
+    ###  Start the Helidon application service
+    if ! systemctl is-enabled helidon-app.service; then
+        echo "Enabling helidon-app.service"
+        mv -f helidon-app.service.new helidon-app.service
+        sudo systemctl enable /var/lib/ocarun/helidon-app.service
+    else
+        # reload systemd manager configuration as helidon-app.service has changed
+        if ! diff helidon-app.service helidon-app.service.new; then
+            echo "Reloading systemd manager configuration"
+            mv -f helidon-app.service.new helidon-app.service
+            sudo systemctl daemon-reload
+        # ignore the new helidon-app.service as it has not changed
+        else
+            rm -f helidon-app.service.new
+        fi
+    fi
+    echo "Starting helidon-app.service"
+    sudo systemctl restart helidon-app.service
 
     # Check if Helidon is ready in 60 seconds using the readiness healthcheck endpoint of the app.
     TIMEOUT_SEC=60
@@ -80,4 +127,4 @@ EOF
 
 # delete private.key and application zip
 rm -f private.key
-rm -f "${HELIDON_OCI_MP_APP_ZIP}"
+rm -f "${HELIDON_MP_APP_ZIP}"
