@@ -26,17 +26,3 @@ instance_ocpus                      = 1
 instance_shape_config_memory_in_gbs = 1
 instance_os                         = "Oracle Linux"
 instance_os_version                 = "8"
-
-# Set values for below variables only under the following conditions:
-# 1. If using user principal authentication. Set the proper user credentials and uncomment corresponding provider
-#    parameters in providers.tf.
-# 2. If user needs additional policy to access the created compartment and cloud shell, which in this scenario, needs
-#    only "user_ocid" to be set up.
-#
-# user_ocid        = "ocid1.user.oc1.."
-# fingerprint      = "1c.."
-# private_key_path = "~/.oci/oci_api_key.pem"
-
-
-
-

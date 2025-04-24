@@ -24,4 +24,4 @@ PUBLIC_IP=$("${SCRIPT_DIR}"/get.sh public_ip)
 # ssh to the instance
 ssh -o StrictHostKeyChecking=accept-new -i private.key opc@"${PUBLIC_IP}"
 # delete private.key and application zip
-rm private.key
+rm -f private.key

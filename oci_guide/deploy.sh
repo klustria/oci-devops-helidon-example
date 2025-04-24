@@ -79,5 +79,5 @@ ssh -i private.key opc@"${PUBLIC_IP}" << 'EOF'
 EOF
 
 # delete private.key and application zip
-rm private.key
-rm "${HELIDON_OCI_MP_APP_ZIP}"
+rm -f private.key
+rm -f "${HELIDON_OCI_MP_APP_ZIP}"

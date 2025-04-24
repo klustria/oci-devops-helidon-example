@@ -55,15 +55,3 @@ variable "instance_os" {
 variable "instance_os_version" {
   default = ""
 }
-
-# Best to set values for below variables in terraform.tfvars under the following conditions:
-# 1. If using user principal authentication.
-# 2. If user needs additional policy to access the created compartment and add cloud shell, which in this
-#    scenario, needs only "user_ocid" to be set up.
-variable "user_ocid" {
-  default = ""
-}
-variable "fingerprint" {
-  default = ""
-}
-

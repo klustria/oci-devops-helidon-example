@@ -1,5 +1,5 @@
 #cloud-config
-# Port 8080 is required by the Helidon application, hence opening it from firewalld
+# Open port 8080 for the Helidon application
 runcmd:
   - echo "Begin firewall port 8080 update" > /var/log/firewall-update.log
   - firewall-offline-cmd --add-port=8080/tcp &>> /var/log/firewall-update.log
