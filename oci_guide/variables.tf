@@ -28,10 +28,6 @@ variable "availablity_domain_name" {
   default = ""
 }
 
-variable "home_region" {
-  default = ""
-}
-
 variable "region" {
   default = ""
 }
