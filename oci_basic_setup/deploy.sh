@@ -81,9 +81,9 @@ Description=Helidon OCI-MP application service
 After=syslog.target network.target
 
 [Service]
-User=ocarun
+User=opc
 Type=simple
-WorkingDirectory=/var/lib/ocarun
+WorkingDirectory=/home/opc
 ExecStart=/bin/bash -c '${JAVA_BIN}/java -jar ${HELIDON_APP_NAME} &> helidon-app.log'
 
 [Install]
