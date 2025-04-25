@@ -55,78 +55,78 @@ scp -o StrictHostKeyChecking=accept-new -i private.key oci-mp-server.zip opc@"${
 
 # Download & install jdk and run app
 ssh -i private.key opc@"${PUBLIC_IP}" "bash -s ${HELIDON_MP_APP_ZIP} ${JDK_TAR_GZ_INSTALLER}" << 'EOF'
-    HELIDON_MP_APP_ZIP=${1}
-    JDK_TAR_GZ_INSTALLER=${2}
+HELIDON_MP_APP_ZIP=${1}
+JDK_TAR_GZ_INSTALLER=${2}
 
-    # Unzip the application binary
-    unzip -o "${HELIDON_MP_APP_ZIP}"
+# Unzip the application binary
+unzip -o "${HELIDON_MP_APP_ZIP}"
 
-    #  Download and extract JDK
-    JDK_TAR_GZ_INSTALLER_BASE=$(basename ${JDK_TAR_GZ_INSTALLER})
-    if ! ls "${JDK_TAR_GZ_INSTALLER_BASE}" ; then
-        rm -f "*jdk*.tar.gz"
-        # Download JDK
-        curl -O "${JDK_TAR_GZ_INSTALLER}" && echo "JDK downloaded successfully"
-        tar xzf ${JDK_TAR_GZ_INSTALLER_BASE} && echo "JDK installed successfully"
-    fi
+#  Download and extract JDK
+JDK_TAR_GZ_INSTALLER_BASE=$(basename ${JDK_TAR_GZ_INSTALLER})
+if ! ls "${JDK_TAR_GZ_INSTALLER_BASE}" ; then
+    rm -f "*jdk*.tar.gz"
+    # Download JDK
+    curl -O "${JDK_TAR_GZ_INSTALLER}" && echo "JDK downloaded successfully"
+    tar xzf ${JDK_TAR_GZ_INSTALLER_BASE} && echo "JDK installed successfully"
+fi
 
-    # export PATH=~/jdk-21.0.7/bin:$PATH
-    # nohup java -jar oci-mp-server.jar &> oci-mp-server.log &
+# export PATH=~/jdk-21.0.7/bin:$PATH
+# nohup java -jar oci-mp-server.jar &> oci-mp-server.log &
 
-    # Create Service file
-    export JAVA_BIN=$(ls -d "$(pwd)"/jdk*/)bin
-    cat << EOF > helidon-app.service.new
-    [Unit]
-    Description=Helidon OCI-MP application service
-    After=syslog.target network.target
+# Create Service file
+export JAVA_BIN=$(ls -d "$(pwd)"/jdk*/)bin
+cat << EOF_INNER > helidon-app.service.new
+[Unit]
+Description=Helidon OCI-MP application service
+After=syslog.target network.target
 
-    [Service]
-    User=ocarun
-    Type=simple
-    WorkingDirectory=/var/lib/ocarun
-    ExecStart=/bin/bash -c '${JAVA_BIN}/java -jar ${HELIDON_APP_NAME} &> helidon-app.log'
+[Service]
+User=ocarun
+Type=simple
+WorkingDirectory=/var/lib/ocarun
+ExecStart=/bin/bash -c '${JAVA_BIN}/java -jar ${HELIDON_APP_NAME} &> helidon-app.log'
 
-    [Install]
-    WantedBy=multi-user.target
-    EOF
+[Install]
+WantedBy=multi-user.target
+EOF_INNER
 
-    #  Start the Helidon application service
-    if ! systemctl is-enabled helidon-app.service; then
-        echo "Enabling helidon-app.service"
+#  Start the Helidon application service
+if ! systemctl is-enabled helidon-app.service; then
+    echo "Enabling helidon-app.service"
+    mv -f helidon-app.service.new helidon-app.service
+    sudo systemctl enable /home/opc/helidon-app.service
+else
+    # reload systemd manager configuration as helidon-app.service has changed
+    if ! diff helidon-app.service helidon-app.service.new; then
+        echo "Reloading systemd manager configuration"
         mv -f helidon-app.service.new helidon-app.service
-        sudo systemctl enable /var/lib/ocarun/helidon-app.service
+        sudo systemctl daemon-reload
+    # ignore the new helidon-app.service as it has not changed
     else
-        # reload systemd manager configuration as helidon-app.service has changed
-        if ! diff helidon-app.service helidon-app.service.new; then
-            echo "Reloading systemd manager configuration"
-            mv -f helidon-app.service.new helidon-app.service
-            sudo systemctl daemon-reload
-        # ignore the new helidon-app.service as it has not changed
-        else
-            rm -f helidon-app.service.new
-        fi
+        rm -f helidon-app.service.new
     fi
-    echo "Starting helidon-app.service"
-    sudo systemctl restart helidon-app.service
+fi
+echo "Starting helidon-app.service"
+sudo systemctl restart helidon-app.service
 
-    # Check if Helidon is ready in 60 seconds using the readiness healthcheck endpoint of the app.
-    TIMEOUT_SEC=60
-    start_time="$(date -u +%s)"
-    while true; do
-    curl -s http://localhost:8080/health/ready | grep -q '"status":"UP"'
-    if [ $? -eq 0 ]; then
-      echo "Helidon app is now running with pid $(ps -fe | grep oci-mp-server | grep -v -e bash -e grep | awk '{print $2}')"
-      break
-    fi
-    current_time="$(date -u +%s)"
-    elapsed_seconds=$(($current_time-$start_time))
-    if [ $elapsed_seconds -gt $TIMEOUT_SEC ]; then
-      echo "Error: Helidon app failed to run successfully. Printing the logs..."
-      cat oci-mp-server.log
-      exit 1
-    fi
-      sleep 1
-    done
+# Check if Helidon is ready in 60 seconds using the readiness healthcheck endpoint of the app.
+TIMEOUT_SEC=60
+start_time="$(date -u +%s)"
+while true; do
+curl -s http://localhost:8080/health/ready | grep -q '"status":"UP"'
+if [ $? -eq 0 ]; then
+  echo "Helidon app is now running with pid $(ps -fe | grep oci-mp-server | grep -v -e bash -e grep | awk '{print $2}')"
+  break
+fi
+current_time="$(date -u +%s)"
+elapsed_seconds=$(($current_time-$start_time))
+if [ $elapsed_seconds -gt $TIMEOUT_SEC ]; then
+  echo "Error: Helidon app failed to run successfully. Printing the logs..."
+  cat oci-mp-server.log
+  exit 1
+fi
+  sleep 1
+done
 EOF
 
 # delete private.key and application zip
