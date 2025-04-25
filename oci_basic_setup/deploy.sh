@@ -16,9 +16,9 @@
 #
 
 JDK_TAR_GZ_INSTALLER="https://download.oracle.com/java/21/latest/jdk-21_linux-x64_bin.tar.gz"
+HELIDON_MP_APP_ZIP=oci-mp-server.zip
 
 SCRIPT_DIR=$(dirname $0)
-HELIDON_MP_APP_ZIP=oci-mp-server.zip
 source "${SCRIPT_DIR}"/get_common.sh
 
 
@@ -54,11 +54,15 @@ PUBLIC_IP=$("${SCRIPT_DIR}"/get.sh public_ip)
 scp -o StrictHostKeyChecking=accept-new -i private.key oci-mp-server.zip opc@"${PUBLIC_IP}":/home/opc
 
 # Download & install jdk and run app
-ssh -i private.key opc@"${PUBLIC_IP}" << 'EOF'
-    ### Unzip the application binary
+ssh -i private.key opc@"${PUBLIC_IP}" "bash -s ${HELIDON_MP_APP_ZIP} ${JDK_TAR_GZ_INSTALLER}" << 'EOF'
+    HELIDON_MP_APP_ZIP=${1}
+    JDK_TAR_GZ_INSTALLER=${2}
+
+    # Unzip the application binary
     unzip -o "${HELIDON_MP_APP_ZIP}"
 
-    ###  Download and extract JDK
+    #  Download and extract JDK
+    JDK_TAR_GZ_INSTALLER_BASE=$(basename ${JDK_TAR_GZ_INSTALLER})
     if ! ls "${JDK_TAR_GZ_INSTALLER_BASE}" ; then
         rm -f "*jdk*.tar.gz"
         # Download JDK
@@ -69,7 +73,7 @@ ssh -i private.key opc@"${PUBLIC_IP}" << 'EOF'
     # export PATH=~/jdk-21.0.7/bin:$PATH
     # nohup java -jar oci-mp-server.jar &> oci-mp-server.log &
 
-    ### Create Service file
+    # Create Service file
     export JAVA_BIN=$(ls -d "$(pwd)"/jdk*/)bin
     cat << EOF > helidon-app.service.new
     [Unit]
@@ -86,7 +90,7 @@ ssh -i private.key opc@"${PUBLIC_IP}" << 'EOF'
     WantedBy=multi-user.target
     EOF
 
-    ###  Start the Helidon application service
+    #  Start the Helidon application service
     if ! systemctl is-enabled helidon-app.service; then
         echo "Enabling helidon-app.service"
         mv -f helidon-app.service.new helidon-app.service
