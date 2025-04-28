@@ -15,9 +15,10 @@
 # limitations under the License.
 #
 
+# Use this to specify the JDK Installer version in tar_gz format
 JDK_TAR_GZ_INSTALLER="https://download.oracle.com/java/21/latest/jdk-21_linux-x64_bin.tar.gz"
-HELIDON_MP_APP_ZIP=oci-mp-server.zip
 
+HELIDON_MP_APP_ZIP=oci-mp-server.zip
 SCRIPT_DIR=$(dirname $0)
 source "${SCRIPT_DIR}"/get_common.sh
 
@@ -65,6 +66,7 @@ unzip -o "${HELIDON_MP_APP_ZIP}"
 JDK_TAR_GZ_INSTALLER_BASE=$(basename ${JDK_TAR_GZ_INSTALLER})
 if ! ls "${JDK_TAR_GZ_INSTALLER_BASE}" ; then
     rm -f "*jdk*.tar.gz"
+    rm -rf jdk*
     # Download JDK
     curl -O "${JDK_TAR_GZ_INSTALLER}" && echo "JDK downloaded successfully"
     tar xzf ${JDK_TAR_GZ_INSTALLER_BASE} && echo "JDK installed successfully"
@@ -84,13 +86,19 @@ After=syslog.target network.target
 User=opc
 Type=simple
 WorkingDirectory=/home/opc
-ExecStart=/bin/bash -c '${JAVA_BIN}/java -jar ${HELIDON_APP_NAME} &> helidon-app.log'
+ExecStart=/bin/bash -c '${JAVA_BIN}/java -jar oci-mp-server.jar &> helidon-app.log'
 
 [Install]
 WantedBy=multi-user.target
 EOF_INNER
 
-#  Start the Helidon application service
+# Set appropriate SELinux Context for helidon-app.service if SELinux is in enforcing mode
+SELINUX_ENFORCE_STATUS=$(getenforce)
+if [ "${SELINUX_ENFORCE_STATUS}" == "Enforcing" ]; then
+    chcon system_u:object_r:systemd_unit_file_t:s0 helidon-app.service
+fi
+
+# Start the Helidon application service
 if ! systemctl is-enabled helidon-app.service; then
     echo "Enabling helidon-app.service"
     mv -f helidon-app.service.new helidon-app.service
