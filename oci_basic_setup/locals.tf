@@ -15,7 +15,7 @@
 #
 
 locals {
-  resource_name_suffix        = "-helidon_oci_guide"
+  resource_name_suffix        = "-helidon_oci_basic_setup"
   resource_name_random_suffix = "${local.resource_name_suffix}-${random_string.random_value.result}"
 }
 

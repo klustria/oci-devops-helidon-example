@@ -19,28 +19,25 @@
 JDK_TAR_GZ_INSTALLER="https://download.oracle.com/java/21/latest/jdk-21_linux-x64_bin.tar.gz"
 
 HELIDON_MP_APP_ZIP=oci-mp-server.zip
+DEFAULT_PROJECT_PATH=~/oci-mp
 SCRIPT_DIR=$(dirname $0)
 source "${SCRIPT_DIR}"/get_common.sh
 
-
-# Display usage information for this tool.
-display_help()
-{
-  local left_justified_size=24
-  echo "Usage: $(basename "$0") [Helidon MP OCI project path]"
-}
-
 # Main routine
 if [ -z "${1}" ]; then
-    display_help
-    exit
+    read -r -p "Enter the Helidon MP project's root directory (default: ${DEFAULT_PROJECT_PATH}): " PROJECT_PATH
+    # Use eval to expand ~ if it is part of the input
+    PROJECT_PATH=$(eval echo -n "${PROJECT_PATH:-${DEFAULT_PROJECT_PATH}}")
+    echo "$PROJECT_PATH"
+else
+     PROJECT_PATH=${1}
 fi
-if [ ! -d "${1}" ]; then
-    echo "Error: \"${1}\" is not a valid directory"
+if [ ! -d "${PROJECT_PATH}" ]; then
+    echo "Error: \"${PROJECT_PATH}\" is not a valid directory"
     exit 1
 fi
 CURRENT_DIR=$(pwd)
-SERVER_BIN_DIR="${1}/server/target"
+SERVER_BIN_DIR="${PROJECT_PATH}/server/target"
 cd "${SERVER_BIN_DIR}" || exit 1
 
 # Assemble the application zip
