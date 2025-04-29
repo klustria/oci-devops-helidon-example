@@ -95,7 +95,8 @@ EOF_INNER
 # Set appropriate SELinux Context for helidon-app.service if SELinux is in enforcing mode
 SELINUX_ENFORCE_STATUS=$(getenforce)
 if [ "${SELINUX_ENFORCE_STATUS}" == "Enforcing" ]; then
-    chcon system_u:object_r:systemd_unit_file_t:s0 helidon-app.service
+    echo "Setting context for systemd service file"
+    chcon system_u:object_r:systemd_unit_file_t:s0 helidon-app.service.new
 fi
 
 # Start the Helidon application service
