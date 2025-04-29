@@ -27,8 +27,7 @@ ALL_COMMAND=all
 CREATE_SSH_PRIVATE_KEY_COMMAND=create_ssh_private_key
 
 get_compartment_id() {
-  local compartment_id=$(jq -r '.resources[] | select(.type == "oci_core_instance").instances[].attributes | select(.display_name == "instance-helidon-demo") | .compartment_id' ${TERRAFORM_TFSTATE})
-  evaluate_parsed_resource ${compartment_id}
+  get_resource_value compartment_id
   echo
 }
 

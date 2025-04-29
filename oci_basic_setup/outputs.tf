@@ -34,3 +34,8 @@ output "instance_ssh_private_key" {
 output "instance_public_ip" {
   value = module.instance.instance_public_ip
 }
+
+# Output Custom Logging id
+output "application_log_id" {
+  value = oci_logging_log.custom_logging.id
+}
