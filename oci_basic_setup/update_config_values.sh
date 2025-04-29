@@ -47,11 +47,3 @@ sed -i 's/oci.monitoring.compartmentId=<your monitoring compartment id>/oci.moni
 sed -i 's/oci.monitoring.namespace=<your monitoring namespace e.g. helidon_oci>/oci.monitoring.namespace=helidon_application/' "${MICROPROFILE_CONFIG_PROFILE}"
 sed -i 's/oci.logging.id=<your oci custom log id>/oci.logging.id='"${APPLICATION_LOG_ID}"'/' "${MICROPROFILE_CONFIG_PROFILE}"
 echo "Properties oci.monitoring.compartmentId, oci.monitoring.namespace and oci.logging.id in ${MICROPROFILE_CONFIG_PROFILE} were updated"
-
-set +e
-APPLICATION_BUCKET_NAME_PARAMETER=oci.bucket.name
-if ! grep -q ${APPLICATION_BUCKET_NAME_PARAMETER} "${MICROPROFILE_CONFIG_PROFILE}"; then
-  APPLICATION_BUCKET_NAME_VALUE=$(${GET_SH} bucket_name)
-  echo -e "\n# OCI Bucket Name\n${APPLICATION_BUCKET_NAME_PARAMETER}=${APPLICATION_BUCKET_NAME_VALUE}" >> "${MICROPROFILE_CONFIG_PROFILE}"
-  echo "Property ${APPLICATION_BUCKET_NAME_PARAMETER} was added in ${MICROPROFILE_CONFIG_PROFILE}"
-fi
