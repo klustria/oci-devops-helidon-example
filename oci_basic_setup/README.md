@@ -14,7 +14,7 @@ This example will demonstrate how to create a basic OCI infrastructure setup tha
 - An OCI tenancy that has enough capacity to provision an OCI Compute Instance and a Virtual Cloud Network. This will also work on the free trial of the [OCI Free Tier](https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier.htm).
 
 ## Tasks
-### Set up Cloud Shell/Cloud Editor access.
+### Set up Cloud Shell access.
 1. If you are already a super-user with administrator rights that has access to all resources in the tenancy, skip to the next section. Otherwise, continue to the next step.
 2. Create a new group and add your user as a member of that group.
 3. Create a new policy and provide that group a cloud-shell access:
@@ -23,13 +23,13 @@ This example will demonstrate how to create a basic OCI infrastructure setup tha
    ```
 4. Verify that it works by opening Cloud Shell from the OCI Console.
 
-### Clone the helidon-labs subdirectory for this lab exercise
+### Retrieve the oci-basic-setup subdirectory from the helidon-labs repository
 The materials for this exercise will be located in the [oci-basic-setup](https://github.com/helidon-io/helidon-labs/tree/main/hols/oci-basic-setup) subdirectory of the  [helidon-labs](https://github.com/helidon-io/helidon-labs) repository, hence only that specific subdirectory will be cloned.
-1. Open a Cloud Shell terminal. On the terminal, make sure you are in the home directory
+1. Open a Cloud Shell terminal and make sure you are in the home directory
    ```shell
    cd ~
    ```
-2. Use git sparsecheckout to checkout only oci-devops directory from the helidon-labs repository.
+2. Use `git sparsecheckout` to check out only the `oci-basic-setup` directory from the helidon-labs repository.
    ```shell
    git init helidon-labs
    cd helidon-labs 
@@ -39,7 +39,9 @@ The materials for this exercise will be located in the [oci-basic-setup](https:/
    echo ".gitignore" >> .git/info/sparse-checkout
    git pull --depth=1 origin main
    ```
-### Prepare the environment
+3. The previous step will pull all the required Terraform and Bash script files into the  `~/helidon-labs/hols/oci-basic-setup` directory that will be needed to perform various operations to complete this exercise.
+
+### Prepare the OCI infrastructure environment
 The goal of this task is to prepare a basic infrastructure environment comprised of a Compartment, Dynamic Groups, Policies, Compute Instance and Virtual Cloud Network. This section requires a user with administrator privilege.
 1. Open the newly cloned repository directory `oci-basic-setup` from the a Cloud Shell terminal.
    ```shell
@@ -107,14 +109,14 @@ The goal of this task is to prepare a basic infrastructure environment comprised
     ```shell
     cd ~/oci-mp
     ```
-11. Run the utility script from the main repository (`oci-devops-helidon-example`) to update the Config parameters:
+11. Run the `update_config_values.sh` utility script from the `oci-basic-setup` local repository to update the config parameters. Specify the directory location of the Helidon application as an argument to this script.
     ```shell
-    ~/oci-devops-helidon-example/utils/update_config_values.sh
+    ~/helidon-labs/hols/oci-basic-setup/update_config_values.sh ~/oci-mp
     ```
     Invoking this script will perform the following:
     1. Updates in `~/oci-mp/server/src/main/resources/application.yaml` config file to set up a Helidon feature that sends Helidon generated metrics to the OCI monitoring service.
        1. compartmentId - Compartment ocid that is used for this demo
-       2. namespace - This can be any string but for this demo, this will be set to `helidon_metrics`.
+       2. namespace - This can be any string but for this demo, will be set to `helidon_metrics`.
     2. Updates in `~/oci-mp/server/src/main/resources/META-INF/microprofile-config.properties` config file to set up configuration parameters used by the Helidon app code to perform integration with OCI Logging and Metrics service.
        1. oci.monitoring.compartmentId - Compartment ocid that is used for this demo
        2. oci.monitoring.namespace - This can be any string but for this demo, this will be set to `helidon_application`.
@@ -192,7 +194,7 @@ The goal of this task is to prepare a basic infrastructure environment comprised
 
 ### Environment Cleanup
 When the environment is no longer needed, all the OCI resources can be cleaned up by following these steps:
-1. Go to the home directory from a Cloud Shell console:
+1. Go back to oci-basic-setup local repository directory.
    ```shell
    cd ~/helidon-labs/hols/oci-basic-setup
    ```  
