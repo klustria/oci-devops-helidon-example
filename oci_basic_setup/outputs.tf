@@ -37,5 +37,5 @@ output "instance_public_ip" {
 
 # Output Custom Logging id
 output "application_log_id" {
-  value = oci_logging_log.custom_logging.id
+  value = oci_logging_log.custom_log.id
 }

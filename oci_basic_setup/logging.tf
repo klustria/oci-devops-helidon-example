@@ -15,13 +15,13 @@
 #
 
 # Create all logging resources required by the Helidon OCI application
-resource "oci_logging_log_group" "custom_logging_group" {
-  compartment_id = var.compartment_ocid
-  display_name   = "app-log-group${local.resource_name_suffix}"
+resource "oci_logging_log_group" "custom_log_group" {
+  compartment_id = module.tenancy.compartment_id
+  display_name   = "custom-log-group${local.resource_name_random_suffix}"
 }
 
-resource "oci_logging_log" "custom_logging" {
-  display_name = "app-log${local.resource_name_suffix}"
-  log_group_id = oci_logging_log_group.custom_logging_group.id
+resource "oci_logging_log" "custom_log" {
+  display_name = "custom-log${local.resource_name_random_suffix}"
+  log_group_id = oci_logging_log_group.custom_log_group.id
   log_type     = "CUSTOM"
 }
